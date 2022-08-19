@@ -1,15 +1,16 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {Route, Routes} from 'react-router-dom';
 import {authRoutes, publicRoutes} from "../routes";
 import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
+import {Context} from "../index";
 // import Dashboard from "../pages/Dashboard";
 
 const AppRouter = () => {
-    const isAuth = false;
+    const {user} = useContext(Context);
     return (
         <Routes>
-            {isAuth && authRoutes.map(({path, component}) =>
+            {user.isAuth && authRoutes.map(({path, component}) =>
                 <Route key={path} path={path} element={component} />
             )}
 
@@ -17,7 +18,7 @@ const AppRouter = () => {
                 <Route key={path}  path={path} element={component} />
             )}
 
-            <Route path="*" element={isAuth ? <Login/> : <Dashboard/>}/>
+            <Route path="*" element={user.isAuth ? <Dashboard/> : <Login/>}/>
         </Routes>
 
     );
