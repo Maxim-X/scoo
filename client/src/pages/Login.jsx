@@ -1,11 +1,14 @@
 import React, {useContext, useState} from 'react';
 import {Card, Container, Form, Button} from "react-bootstrap";
+import {useNavigate} from 'react-router-dom';
 import {login} from "../http/userAPI";
 import {observer} from "mobx-react-lite";
 import {Context} from "../index";
+import {ALL_ROUTE, DASHBOARD_ROUTE} from "../utils/consts";
 
 const Login = observer(() => {
     const {user} = useContext(Context);
+    const history = useNavigate();
     const [email, setEmail] =  useState('');
     const [password, setPassword] =  useState('');
 
@@ -14,8 +17,9 @@ const Login = observer(() => {
         try {
             let data;
             data = await login(email, password);
-            user.setUser(user)
+            user.setUser(data)
             user.setIsAuth(true);
+            history(ALL_ROUTE);
         }catch (e){
             console.log(e.response.data);
             alert(e.response.data.message);
