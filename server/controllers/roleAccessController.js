@@ -1,7 +1,11 @@
-
-const ApiError = require('../error/apiError');
+const {Type} = require('../models/models');
+const ApiError = require('../error/ApiError');
 class RoleAccessController {
     async create(req, res){
+
+    }
+
+    async get(req,res){
 
     }
 
