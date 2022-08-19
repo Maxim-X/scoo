@@ -1,15 +1,26 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {Card, Container, Form, Button} from "react-bootstrap";
 import {login} from "../http/userAPI";
+import {observer} from "mobx-react-lite";
+import {Context} from "../index";
 
-const Login = () => {
+const Login = observer(() => {
+    const {user} = useContext(Context);
     const [email, setEmail] =  useState('');
     const [password, setPassword] =  useState('');
 
     const auth = async (e) =>{
         e.preventDefault();
-      const response = await login(email, password);
-      console.log(response);
+        try {
+            let data;
+            data = await login(email, password);
+            user.setUser(user)
+            user.setIsAuth(true);
+        }catch (e){
+            console.log(e.response.data);
+            alert(e.response.data.message);
+        }
+
     };
     return (
         <Container className="d-flex justify-content-center align-items-center" style={{height: window.innerHeight}}>
@@ -32,6 +43,6 @@ const Login = () => {
             </Card>
         </Container>
     );
-};
+});
 
 export default Login;
