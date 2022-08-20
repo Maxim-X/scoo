@@ -1,8 +1,10 @@
+
 body {
     padding: 0px;
     margin: 0px;
     box-sizing: border-box;
     background-color: #e0e2ef;
+    font-family: Overpass, system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans","Liberation Sans",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
 }
 
 .left_main_menu {
@@ -46,4 +48,135 @@ body {
     font-size: 14px;
     font-weight: 500;
     padding: 15px 0px 10px 15px;
+}
+.mainContainer{
+    padding: 15px 25px;
+}
+
+@font-face {
+    font-family: 'Overpass';
+    src: local('Overpass Light'), local('Overpass-Light'),
+    url('../static/fonts/overpass/Overpass-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Overpass';
+    src: local('Overpass Black Italic'), local('Overpass-BlackItalic'),
+    url('../static/fonts/overpass/Overpass-BlackItalic.ttf') format('truetype');
+    font-weight: 900;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Overpass';
+    src: local('Overpass Italic'), local('Overpass-Italic'),
+    url('../static/fonts/overpass/Overpass-Italic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Overpass';
+    src: local('Overpass Light Italic'), local('Overpass-LightItalic'),
+    url('../static/fonts/overpass/Overpass-LightItalic.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Overpass';
+    src: local('Overpass Bold Italic'), local('Overpass-BoldItalic'),
+    url('../static/fonts/overpass/Overpass-BoldItalic.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Overpass';
+    src: local('Overpass Regular'), local('Overpass-Regular'),
+    url('../static/fonts/overpass/Overpass-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Overpass';
+    src: local('Overpass ExtraLight Italic'), local('Overpass-ExtraLightItalic'),
+    url('../static/fonts/overpass/Overpass-ExtraLightItalic.ttf') format('truetype');
+    font-weight: 200;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Overpass';
+    src: local('Overpass Bold'), local('Overpass-Bold'),
+    url('../static/fonts/overpass/Overpass-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Overpass';
+    src: local('Overpass SemiBold Italic'), local('Overpass-SemiBoldItalic'),
+    url('../static/fonts/overpass/Overpass-SemiBoldItalic.ttf') format('truetype');
+    font-weight: 600;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Overpass';
+    src: local('Overpass ExtraBold Italic'), local('Overpass-ExtraBoldItalic'),
+    url('../static/fonts/overpass/Overpass-ExtraBoldItalic.ttf') format('truetype');
+    font-weight: 800;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Overpass';
+    src: local('Overpass ExtraBold'), local('Overpass-ExtraBold'),
+    url('../static/fonts/overpass/Overpass-ExtraBold.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Overpass';
+    src: local('Overpass Thin'), local('Overpass-Thin'),
+    url('../static/fonts/overpass/Overpass-Thin.ttf') format('truetype');
+    font-weight: 100;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Overpass';
+    src: local('Overpass Black'), local('Overpass-Black'),
+    url('../static/fonts/overpass/Overpass-Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Overpass';
+    src: local('Overpass ExtraLight'), local('Overpass-ExtraLight'),
+    url('../static/fonts/overpass/Overpass-ExtraLight.ttf') format('truetype');
+    font-weight: 200;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Overpass';
+    src: local('Overpass Thin Italic'), local('Overpass-ThinItalic'),
+    url('../static/fonts/overpass/Overpass-ThinItalic.ttf') format('truetype');
+    font-weight: 100;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Overpass';
+    src: local('Overpass SemiBold'), local('Overpass-SemiBold'),
+    url('../static/fonts/overpass/Overpass-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
 }

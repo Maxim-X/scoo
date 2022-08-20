@@ -5,7 +5,7 @@ import {RiUserFollowFill} from "react-icons/ri";
 
 const TopMenu = () => {
     return (
-        <Navbar className={classes.topMenu}>
+        <Navbar className={classes.topMenuD}>
             <Container fluid>
                 <Navbar.Collapse>
                     <Nav className="me-auto">
