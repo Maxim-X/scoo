@@ -38,32 +38,6 @@ const AppRouter = () => {
                 )
             }
 
-            {/* Отрисовка страниц по шаблону */}
-            {/*{user.isAuth ?*/}
-            {/*    <Route path="/" element={<Header/>}>*/}
-            {/*        {authRoutes.visHeader.map(({path, component}) =>*/}
-            {/*            <Route key={path} path={path} element={component} />*/}
-            {/*        )}*/}
-            {/*    </Route>*/}
-            {/*    :*/}
-            {/*    <Route path="/" element={<Header/>}>*/}
-            {/*        {publicRoutes.visHeader.map(({path, component}) =>*/}
-            {/*            <Route key={path} path={path} element={component} />*/}
-            {/*        )}*/}
-            {/*    </Route>*/}
-            {/*}*/}
-            {/* Отрисовка страниц не по шаблону */}
-            {/*{user.isAuth ?*/}
-            {/*    authRoutes.hidHeader.map(({path, component}) =>*/}
-            {/*        <Route key={path} path={path} element={component} />*/}
-            {/*    )*/}
-            {/*    :*/}
-            {/*    publicRoutes.hidHeader.map(({path, component}) =>*/}
-            {/*        <Route key={path} path={path} element={component} />*/}
-            {/*    )*/}
-            {/*}*/}
-
-
             <Route path="*" element={user.isAuth ? <Dashboard/> : <Login/>}/>
         </Routes>
 

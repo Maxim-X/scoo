@@ -1,0 +1,49 @@
+body {
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+    background-color: #e0e2ef;
+}
+
+.left_main_menu {
+    background: #23283b;
+    height: 100%;
+}
+
+.container-fluid {
+    margin: 0px;
+    padding: 0px;
+}
+
+.main-logo {
+    max-height: 66px;
+}
+.left-menu-li a:focus {
+    color: #6d7287;
+}
+.main-logo span {
+    color: white;
+    padding-left: 10px;
+    font-weight: 600;
+}
+
+.left-menu-li a {
+    color: #6d7287;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.left-menu-li a svg {
+    margin-right: 10px;
+}
+
+.left-menu-li a:hover {
+    color: #b1b7cd;
+}
+
+.left-menu .head-menu {
+    color: #686c7a;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 15px 0px 10px 15px;
+}
