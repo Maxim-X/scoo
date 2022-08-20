@@ -4,19 +4,65 @@ import {authRoutes, publicRoutes} from "../routes";
 import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import {Context} from "../index";
+import Header from "./Header";
 // import Dashboard from "../pages/Dashboard";
 
 const AppRouter = () => {
     const {user} = useContext(Context);
+    console.log(user.isAuth);
+
+    let routes_template, routes_not_template;
+    if (user.isAuth){
+        routes_template = authRoutes.visHeader;
+        routes_not_template = authRoutes.hidHeader;
+    }else{
+        routes_template = publicRoutes.visHeader;
+        routes_not_template = publicRoutes.hidHeader;
+    }
     return (
         <Routes>
-            {user.isAuth && authRoutes.map(({path, component}) =>
-                <Route key={path} path={path} element={component} />
-            )}
+            /* Отрисовка страниц по шаблону */
+            {routes_template.length > 0 &&
+                <Route path="/" element={<Header/>}>
+                    {routes_template.map(({path, component}) =>
+                        <Route key={path} path={path} element={component} />
+                    )}
 
-            {publicRoutes.map(({path, component}) =>
-                <Route key={path}  path={path} element={component} />
-            )}
+                </Route>
+            }
+
+            /* Отрисовка страниц не по шаблону */
+            {routes_not_template.length > 0 &&
+                routes_not_template.map(({path, component}) =>
+                    <Route key={path} path={path} element={component} />
+                )
+            }
+
+            {/* Отрисовка страниц по шаблону */}
+            {/*{user.isAuth ?*/}
+            {/*    <Route path="/" element={<Header/>}>*/}
+            {/*        {authRoutes.visHeader.map(({path, component}) =>*/}
+            {/*            <Route key={path} path={path} element={component} />*/}
+            {/*        )}*/}
+            {/*    </Route>*/}
+            {/*    :*/}
+            {/*    <Route path="/" element={<Header/>}>*/}
+            {/*        {publicRoutes.visHeader.map(({path, component}) =>*/}
+            {/*            <Route key={path} path={path} element={component} />*/}
+            {/*        )}*/}
+            {/*    </Route>*/}
+            {/*}*/}
+            {/* Отрисовка страниц не по шаблону */}
+            {/*{user.isAuth ?*/}
+            {/*    authRoutes.hidHeader.map(({path, component}) =>*/}
+            {/*        <Route key={path} path={path} element={component} />*/}
+            {/*    )*/}
+            {/*    :*/}
+            {/*    publicRoutes.hidHeader.map(({path, component}) =>*/}
+            {/*        <Route key={path} path={path} element={component} />*/}
+            {/*    )*/}
+            {/*}*/}
+
 
             <Route path="*" element={user.isAuth ? <Dashboard/> : <Login/>}/>
         </Routes>

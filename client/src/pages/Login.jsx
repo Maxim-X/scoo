@@ -4,7 +4,7 @@ import {useNavigate} from 'react-router-dom';
 import {login} from "../http/userAPI";
 import {observer} from "mobx-react-lite";
 import {Context} from "../index";
-import {ALL_ROUTE, DASHBOARD_ROUTE} from "../utils/consts";
+import {DASHBOARD_ROUTE, LOGIN_ROUTE} from "../utils/consts";
 
 const Login = observer(() => {
     const {user} = useContext(Context);
@@ -17,9 +17,10 @@ const Login = observer(() => {
         try {
             let data;
             data = await login(email, password);
+            console.log(data);
             user.setUser(data)
             user.setIsAuth(true);
-            history(ALL_ROUTE);
+            window.location.href = DASHBOARD_ROUTE;
         }catch (e){
             console.log(e.response.data);
             alert(e.response.data.message);
