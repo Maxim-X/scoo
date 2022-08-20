@@ -16,7 +16,7 @@
     width: 45px;
     height: 45px;
     text-align: center;
-    line-height: 40px;
+    line-height: 43px;
     border-radius: 15px;
     color: #cbd6ff;
     font-size: 21px;
@@ -26,7 +26,7 @@
     color: #23283b;
     text-align: right;
     line-height: 20px;
-    padding: 3px 15px;
+    padding: 5px 15px 2px 15px;
 }
 
 .UserName .text strong {

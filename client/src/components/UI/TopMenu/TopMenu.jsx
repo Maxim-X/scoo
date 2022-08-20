@@ -1,9 +1,13 @@
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import {Container, Nav, Navbar} from "react-bootstrap";
 import classes from "./TopMenu.module.css"
 import {RiUserFollowFill} from "react-icons/ri";
+import {Context} from "../../../index";
+import {useNavigate} from "react-router-dom";
 
 const TopMenu = () => {
+    const user_data = useContext(Context);
+    const user = user_data.user.user;
     return (
         <Navbar className={classes.topMenuD}>
             <Container fluid>
@@ -16,7 +20,7 @@ const TopMenu = () => {
                     <Nav>
                         <div className={classes.UserName}>
                             <div className={classes.text}>
-                                <strong>Максим</strong>
+                                <strong>{user.name}</strong>
                                 <p>Администратор</p>
                             </div>
                             <div className={classes.icon}><RiUserFollowFill /></div>
