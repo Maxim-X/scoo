@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {Col, Container, Navbar, Row} from "react-bootstrap";
 import {AiFillExperiment} from "react-icons/ai";
-import {Outlet, useNavigate} from "react-router-dom";
+import {Link, Outlet, useNavigate} from "react-router-dom";
 import {Context} from "../index";
 
 import {LOGIN_ROUTE} from "../utils/consts";
@@ -23,21 +23,23 @@ const Header = () => {
             <Row className="m-0">
                 <Col style={{width: "260px", maxWidth: "260px"}} className="p-0 vh-100">
                     <div className="left_main_menu">
+                        <Link to="/" style={{textDecoration: "none"}}>
                         <Navbar className="main-logo">
                             <Container>
-                                <Navbar.Brand href="#home">
-                                    <AiFillGitlab color="#4c70f0" size="2.5rem"/>
-                                    <span>JustScoo</span>
-                                </Navbar.Brand>
+                                    <Navbar.Brand>
+                                           <AiFillGitlab color="#4c70f0" size="2.5rem"/>
+                                           <span>JustScoo</span>
+                                    </Navbar.Brand>
                             </Container>
                         </Navbar>
+                        </Link>
                         <ul className="nav flex-column left-menu">
                             <div className="head-menu">MENU</div>
                             <li className="nav-item left-menu-li">
-                                <a className="nav-link active" href="#">
+                                <Link className="nav-link active" to="/stock">
                                     <span><AiFillExperiment size="1.4rem" /></span>
-                                    <span>Пункт меню</span>
-                                </a>
+                                    <span>Your motorcycles</span>
+                                </Link>
                             </li>
                             <li className="nav-item left-menu-li">
                                 <a className="nav-link active" href="#">

@@ -1,0 +1,41 @@
+.mainSearch {
+    height: 100%;
+    width: 100%;
+}
+.mainSearch input {
+
+}
+
+.mainSearch button {
+    background: #eeeeee;
+    border: none;
+    border-radius: 5px;
+    box-shadow: none !important;
+}
+
+.mainSearch button:hover {
+    background: #eeeeee;
+    color: #b2b2b2;
+}
+.mainSearch button:active {
+    background: #eeeeee;
+    color: #b2b2b2;
+}
+.mainSearch button:focus {
+    background: #eeeeee;
+    color: #b2b2b2;
+}
+
+.mainSearch input:focus {
+    background: #eeeeee;
+    box-shadow: none
+}
+.iconSearch {
+    width: 21px;
+    height: 21px;
+    color: #b2b2b2;
+}
+
+.mainSearch button:hover .iconSearch {
+    color: #c9c9c9;
+}
