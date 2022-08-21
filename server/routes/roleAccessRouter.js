@@ -4,7 +4,7 @@ const roleAccessController = require('../controllers/roleAccessController');
 
 router.post('/', roleAccessController.create);
 router.get('/', roleAccessController.get);
-router.get('/:id', roleAccessController.getOne);
+router.get('/one', roleAccessController.getOne);
 
 
 module.exports = router;

@@ -21,7 +21,7 @@ const TopMenu = () => {
                         <div className={classes.UserName}>
                             <div className={classes.text}>
                                 <strong>{user.name}</strong>
-                                <p>Администратор</p>
+                                <p>{user.role.name}</p>
                             </div>
                             <div className={classes.icon}><RiUserFollowFill /></div>
                         </div>

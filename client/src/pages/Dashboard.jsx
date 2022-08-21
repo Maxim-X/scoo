@@ -8,8 +8,6 @@ import {LOGIN_ROUTE} from "../utils/consts";
 const Dashboard = () => {
     const {user} = useContext(Context);
     const navigate = useNavigate();
-    console.log(user.user.name);
-
     const logOut = () => {
         user.setUser({})
         user.setIsAuth(false);

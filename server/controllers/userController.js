@@ -1,17 +1,17 @@
 const ApiError = require('../error/ApiError');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const {User} = require('../models/models');
+const {User, RoleAccess} = require('../models/models');
 
-const generateJwt = (id, name, email) => {
-    return jwt.sign({id, name, email}, process.env.SECRET_KEY, {expiresIn:'24h'});
+const generateJwt = (id, name, email,roleId, role) => {
+    return jwt.sign({id, name, email, roleId, role}, process.env.SECRET_KEY, {expiresIn:'24h'});
 }
 
 class UserController {
     async reg(req, res, next){
         const {name, email, password} = req.body;
         if (!name || !email || !password){
-            return next(ApiError.badRequest("Incorrect data entered"+req.body));
+            return next(ApiError.badRequest("Incorrect data entered"));
         }
         const candidate = await User.findOne({where: {email}});
         if (candidate){
@@ -34,14 +34,35 @@ class UserController {
         if(!comparePassword){
             return next(ApiError.internal('Incorrect password specified'));
         }
-        const token = generateJwt(user.id, user.name, user.email);
+
+        const access_role = await RoleAccess.findOne({where:{id: user.roleAccessId}});
+        if (!access_role){
+            return next(ApiError.internal("This role was not found"));
+        }
+        const {id, name, is_admin, all_access} = access_role;
+        const role = {id, name, is_admin, all_access};
+        const token = generateJwt(user.id, user.name, user.email, user.roleAccessId, role);
         return res.json({token});
     }
 
     async check(req, res, next){
-        const token = generateJwt(req.user.id, req.user.name, req.user.email);
+        console.log(req.user);
+        const user = await User.findOne({where: {id:req.user.id}});
+        const {roleAccessId} = user;
+        const access_role = await RoleAccess.findOne({where:{id: roleAccessId}});
+        const {name, is_admin, all_access} = access_role;
+        const role = {name, is_admin, all_access};
+        const token = generateJwt(req.user.id, req.user.name, req.user.email, roleAccessId, role);
         return res.json({token});
     }
+
+    // async getInfo(req, res, next){
+    //     let {userID} = req.query;
+    //     if(!userID){
+    //         return next(ApiError.badRequest("Incorrect data entered"));
+    //     }
+    //     let userInfo = await User.findOne({where: {id: userID}});
+    // }
 }
 
 module.exports = new UserController();

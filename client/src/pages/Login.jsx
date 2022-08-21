@@ -17,10 +17,10 @@ const Login = observer(() => {
         try {
             let data;
             data = await login(email, password);
-            console.log(data);
             user.setUser(data)
             user.setIsAuth(true);
-            window.location.href = DASHBOARD_ROUTE;
+            console.log(data);
+            // window.location.href = DASHBOARD_ROUTE;
         }catch (e){
             console.log(e.response.data);
             alert(e.response.data.message);
