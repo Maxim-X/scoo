@@ -42,34 +42,41 @@ const Header = () => {
                                 </Link>
                             </li>
                             <li className="nav-item left-menu-li">
-                                <a className="nav-link active" href="#">
+                                <Link className="nav-link active" to="/clients">
                                     <span><AiFillExperiment size="1.4rem" /></span>
-                                    <span>Пункт меню</span>
-                                </a>
+                                    <span>Clients</span>
+                                </Link>
+                            </li>
+
+                            <li className="nav-item left-menu-li">
+                                <Link className="nav-link active" to="/stock">
+                                    <span><AiFillExperiment size="1.4rem" /></span>
+                                    <span>Your motorcycles</span>
+                                </Link>
                             </li>
                             <li className="nav-item left-menu-li">
-                                <a className="nav-link active" href="#">
+                                <Link className="nav-link active" to="/stock">
                                     <span><AiFillExperiment size="1.4rem" /></span>
-                                    <span>Пункт меню</span>
-                                </a>
+                                    <span>Your motorcycles</span>
+                                </Link>
                             </li>
                             <li className="nav-item left-menu-li">
-                                <a className="nav-link active" href="#">
+                                <Link className="nav-link active" to="/stock">
                                     <span><AiFillExperiment size="1.4rem" /></span>
-                                    <span>Пункт меню</span>
-                                </a>
+                                    <span>Your motorcycles</span>
+                                </Link>
                             </li>
                             <li className="nav-item left-menu-li">
-                                <a className="nav-link active" href="#">
+                                <Link className="nav-link active" to="/stock">
                                     <span><AiFillExperiment size="1.4rem" /></span>
-                                    <span>Пункт меню</span>
-                                </a>
+                                    <span>Your motorcycles</span>
+                                </Link>
                             </li>
                             <li className="nav-item left-menu-li">
-                                <a className="nav-link active" href="#">
+                                <Link className="nav-link active" to="/stock">
                                     <span><AiFillExperiment size="1.4rem" /></span>
-                                    <span>Пункт меню</span>
-                                </a>
+                                    <span>Your motorcycles</span>
+                                </Link>
                             </li>
                             <li className="nav-item left-menu-li">
                                 <button onClick={() => logOut()}>Выйти</button>

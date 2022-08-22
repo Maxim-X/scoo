@@ -22,8 +22,22 @@ const RoleAccess = sequelize.define( 'role_access', {
     //id_company :{type: DataTypes.INTEGER, allowNull: false},
 });
 
+const Client = sequelize.define( 'client', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, allowNull: false},
+    phone: {type: DataTypes.STRING, allowNull: true},
+    email: {type: DataTypes.STRING, allowNull: true},
+    passport_series: {type: DataTypes.STRING, allowNull: true},
+    passport_number: {type: DataTypes.STRING, allowNull: true},
+    birthday: {type: DataTypes.DATEONLY, allowNull: true},
+    //id_company :{type: DataTypes.INTEGER, allowNull: false},
+});
+
 Company.hasMany(RoleAccess);
 RoleAccess.belongsTo(Company);
+
+Company.hasMany(Client);
+Client.belongsTo(Company);
 
 RoleAccess.hasOne(User)
 User.belongsTo(RoleAccess);
@@ -31,5 +45,6 @@ User.belongsTo(RoleAccess);
 module.exports = {
     Company,
     User,
-    RoleAccess
+    RoleAccess,
+    Client
 };
