@@ -1,10 +1,10 @@
 const ApiError = require('../error/ApiError');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const {User, RoleAccess} = require('../models/models');
+const {User, RoleAccess, Company} = require('../models/models');
 
-const generateJwt = (id, name, email,roleId, role) => {
-    return jwt.sign({id, name, email, roleId, role}, process.env.SECRET_KEY, {expiresIn:'24h'});
+const generateJwt = (id, name, company,roleId, role) => {
+    return jwt.sign({id, name, company, roleId, role}, process.env.SECRET_KEY, {expiresIn:'24h'});
 }
 
 class UserController {
@@ -39,9 +39,15 @@ class UserController {
         if (!access_role){
             return next(ApiError.internal("This role was not found"));
         }
+
+        const company = await Company.findOne({where:{id: access_role.companyId}});
+        if (!company){
+            return next(ApiError.internal("This company was not found"));
+        }
+
         const {id, name, is_admin, all_access} = access_role;
         const role = {id, name, is_admin, all_access};
-        const token = generateJwt(user.id, user.name, user.email, user.roleAccessId, role);
+        const token = generateJwt(user.id, user.name, company, user.roleAccessId, role);
         return res.json({token});
     }
 
@@ -52,7 +58,7 @@ class UserController {
         const access_role = await RoleAccess.findOne({where:{id: roleAccessId}});
         const {name, is_admin, all_access} = access_role;
         const role = {name, is_admin, all_access};
-        const token = generateJwt(req.user.id, req.user.name, req.user.email, roleAccessId, role);
+        const token = generateJwt(req.user.id, req.user.name, req.user.company, roleAccessId, role);
         return res.json({token});
     }
 

@@ -12,11 +12,7 @@ const SearchInput = (props) => {
                 placeholder={props.placeholder}
                 aria-label={props.placeholder}
                 aria-describedby="basic-addon2"
-                size="lg"
             />
-            {/*<Button variant="outline-secondary" id="button-addon2">*/}
-            {/*    <AiOutlineSearch className={`d-inline-block align-center ${classes.iconSearch} `}/>*/}
-            {/*</Button>*/}
         </InputGroup>
     );
 };
