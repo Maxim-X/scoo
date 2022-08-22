@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useMemo, useState} from 'react';
 import {Button, Card, Col, Container, Row, Table} from "react-bootstrap";
 import SearchInput from "../components/UI/SearchInput/SearchInput";
 import {login} from "../http/userAPI";
@@ -14,11 +14,15 @@ const Clients = () => {
     const [clients, setClients] = useState([]);
     const [head, setHead] = useState([{name: "Name", el: "name"},{name: "Email", el: "email"}, {name: "Phone", el: "phone"}, {name: "Birthday", el: "birthday"}]);
 
-
     useEffect(()=>{
-        all_clients(1).then(clients => setClients(clients));
-        console.log(clients);
+        reloading();
     },[]);
+
+    const reloading = () => {
+        all_clients(1).then(clients => setClients(clients));
+    }
+
+
 
 
     return (
@@ -27,7 +31,7 @@ const Clients = () => {
                 <Col>
                     <h1 className="mainTitle mb-3">Your clients</h1>
                 </Col>
-                <Col style={{textAlign: "right"}}><ModalClient><MainButton><IoIosAdd size="1.2rem" />Add client</MainButton></ModalClient></Col>
+                <Col style={{textAlign: "right"}}><ModalClient reloading={reloading}><MainButton><IoIosAdd size="1.2rem" />Add client</MainButton></ModalClient></Col>
             </Row>
             <Row>
                 <Col>

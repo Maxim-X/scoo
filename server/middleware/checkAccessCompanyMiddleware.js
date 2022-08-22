@@ -7,9 +7,14 @@ module.exports = async function (req, res, next){
         next();
     }
     try {
-        const {id_company} = req.query;
-        console.log(id_company);
-
+        let id_company;
+        if (req.query.id_company !== undefined){
+            id_company = req.query.id_company;
+        }else if (req.body.id_company !== undefined){
+            id_company = req.body.id_company;
+        }else{
+            return res.status(401).json({message: "Not authorized"});
+        }
         const token = req.headers.authorization.split(' ')[1]
         if (!token){
             return res.status(401).json({message: "Not authorized"});

@@ -2,24 +2,44 @@ import React, {useContext, useState} from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import MainButton from "../MainButton/MainButton";
-import {Col, Form, Row} from "react-bootstrap";
+import {Alert, Col, Form, Row} from "react-bootstrap";
 import {Context} from "../../../index";
+import {login} from "../../../http/userAPI";
+import {add_clients} from "../../../http/companyAPI";
 
-const ModalClient = ({children, ...props}) => {
+const ModalClient = ({children,reloading, ...props}) => {
     const {user} = useContext(Context);
-    console.log(user.user.company);
     const [show, setShow] = useState(false);
 
-    const [name, setName] = useState();
-    const [phone, setPhone] = useState();
-    const [email, setEmail] = useState();
-    const [series, setSeries] = useState();
-    const [numberPass, setNumberPass] = useState();
-    const [birthday, setBirthday] = useState();
+    const [name, setName] = useState("");
+    const [phone, setPhone] = useState("");
+    const [email, setEmail] = useState("");
+    const [series, setSeries] = useState("");
+    const [numberPass, setNumberPass] = useState("");
+    const [birthday, setBirthday] = useState("");
+
+    const [successAdd, setSuccessAdd] = useState("");
+    const [failAdd, setFailAdd] = useState("");
 
 
-    const add_client = async () =>{
-        
+    const add_client = async (a) =>{
+        setSuccessAdd("");
+        setFailAdd("");
+        try {
+            const client ={
+                name: name,
+                phone: phone,
+                email: email,
+                series: series,
+                numberPass: numberPass,
+                birthday: birthday,
+            };
+            let data = await add_clients(client, user.user.company.id);
+            setSuccessAdd(data.message);
+            reloading();
+        }catch (e){
+            setFailAdd(e.response.data.message);
+        }
     }
 
     const handleClose = () => setShow(false);
@@ -32,6 +52,8 @@ const ModalClient = ({children, ...props}) => {
                 <Modal.Title>Add client</Modal.Title>
             </Modal.Header>
             <Modal.Body>
+                {successAdd && <Alert variant="primary">{successAdd}</Alert>}
+                {failAdd && <Alert variant="danger">{failAdd}</Alert>}
                 <Form>
                     <Form.Group className="mb-3">
                         <Form.Label>Name and surname</Form.Label>
@@ -62,7 +84,7 @@ const ModalClient = ({children, ...props}) => {
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <MainButton variant="primary" onClick={handleClose}>
+                <MainButton variant="primary" onClick={add_client}>
                     Add client
                 </MainButton>
             </Modal.Footer>

@@ -2,7 +2,40 @@ const {Client} = require("../models/models");
 const ApiError = require("../error/ApiError");
 
 class CompanyController {
-    async create(req, res){
+    async create(req, res, next){
+        let {name, phone, email, series, numberPass, birthday} = req.body.client;
+        let {id_company} = req.body;
+
+        name = name.trim();
+        phone = phone.trim();
+        email = email.trim();
+        series = series.trim();
+        numberPass = numberPass.trim();
+        birthday = birthday.trim();
+        if (!name || name.length == 0){
+            return next(ApiError.badRequest("First and last name not specified"));
+        }
+        if (!id_company || id_company <= 0){
+            return next(ApiError.badRequest("Company not specified"));
+        }
+        if (!phone || phone.length == 0){
+            phone = null;
+        }
+        if (!email || email.length == 0){
+            email = null;
+        }
+        if (!series || series.length == 0){
+            series = null;
+        }
+        if (!numberPass || numberPass.length == 0){
+            numberPass = null;
+        }
+        if (!birthday || birthday.length == 0){
+            birthday = null;
+        }
+        const add_client = await Client.create({name, phone, email, passport_series: series, passport_number: numberPass, birthday, companyId: id_company});
+
+        return res.json({status: true, message:"Client added"});
 
     }
 

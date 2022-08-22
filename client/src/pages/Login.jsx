@@ -21,7 +21,6 @@ const Login = observer(() => {
             user.setIsAuth(true);
             window.location.href = DASHBOARD_ROUTE;
         }catch (e){
-            console.log(e.response.data);
             alert(e.response.data.message);
         }
 
