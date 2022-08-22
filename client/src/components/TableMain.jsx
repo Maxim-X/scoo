@@ -8,7 +8,7 @@ const TableMain = ({data_head, data_body}) => {
             <thead>
                 <tr>
                     {data_head.map((d) =>
-                        <th>{d['name']}</th>
+                        <th key={d['name']}>{d['name']}</th>
                     )}
                 </tr>
             </thead>
