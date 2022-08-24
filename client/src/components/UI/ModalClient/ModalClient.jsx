@@ -5,9 +5,9 @@ import MainButton from "../MainButton/MainButton";
 import {Alert, Col, Form, Row} from "react-bootstrap";
 import {Context} from "../../../index";
 import {login} from "../../../http/userAPI";
-import {add_clients} from "../../../http/companyAPI";
+import {add_clients, edit_clients, get_client} from "../../../http/companyAPI";
 
-const ModalClient = ({children,reloading, ...props}) => {
+const ModalClient = ({reloading,clientEdit, ...props}) => {
     const {user} = useContext(Context);
     const [show, setShow] = useState(false);
 
@@ -20,6 +20,53 @@ const ModalClient = ({children,reloading, ...props}) => {
 
     const [successAdd, setSuccessAdd] = useState("");
     const [failAdd, setFailAdd] = useState("");
+
+    const get_client_info = React.useMemo(async() => {
+        if (clientEdit == 0){
+            return false;
+        }
+        try {
+            let client = await get_client(clientEdit, user.user.company.id);
+            console.log(client);
+            setName(client.name);
+            setPhone(client.phone);
+            setEmail(client.email);
+            setSeries(client.passport_series);
+            setNumberPass(client.passport_number);
+            setBirthday(client.birthday);
+        }catch (e){
+
+        }
+    },[clientEdit]);
+
+    // const get_client_info = async () =>{
+    //     try {
+    //         let client = await get_client(clientEdit, user.user.company.id);
+    //         console.log(client);
+    //         setName(client.name);
+    //         setPhone(client.phone);
+    //         setEmail(client.email);
+    //         setSeries(client.passport_series);
+    //         setNumberPass(client.passport_number);
+    //         setBirthday(client.birthday);
+    //     }catch (e){
+    //
+    //     }
+    // }
+
+    // console.log(clientEdit);
+    // if (clientEdit != 0){
+    //     get_client_info();
+    // }else{
+    //     // setName("");
+    //     // setPhone("");
+    //     // setEmail("");
+    //     // setSeries("");
+    //     // setNumberPass("");
+    //     // setBirthday("");
+    // }
+
+
 
 
     const add_client = async (a) =>{
@@ -46,8 +93,8 @@ const ModalClient = ({children,reloading, ...props}) => {
     const handleShow = () => setShow(true);
     return (
         <>
-            { React.cloneElement( children, { onClick: handleShow } ) }
-        <Modal show={show}  onHide={handleClose}>
+            {/*{ React.cloneElement( children, { onClick: handleShow } ) }*/}
+            <Modal {...props}> {/* show={show}  onHide={handleClose}*/}
             <Modal.Header closeButton>
                 <Modal.Title>Add client</Modal.Title>
             </Modal.Header>

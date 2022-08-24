@@ -11,18 +11,21 @@ import ModalClient from "../components/UI/ModalClient/ModalClient";
 import {Context} from "../index";
 
 const Clients = () => {
+    const {user} = useContext(Context);
     const [clients, setClients] = useState([]);
     const [head, setHead] = useState([{name: "Name", el: "name"},{name: "Email", el: "email"}, {name: "Phone", el: "phone"}, {name: "Birthday", el: "birthday"}]);
+    const [modalShow, setModalShow] = React.useState(false);
+    const [clientEdit, setClientEdit] = useState(0);
 
     useEffect(()=>{
         reloading();
     },[]);
 
+
+
     const reloading = () => {
-        all_clients(1).then(clients => setClients(clients));
+        all_clients(user.user.company.id).then(clients => setClients(clients));
     }
-
-
 
 
     return (
@@ -31,7 +34,10 @@ const Clients = () => {
                 <Col>
                     <h1 className="mainTitle mb-3">Your clients</h1>
                 </Col>
-                <Col style={{textAlign: "right"}}><ModalClient reloading={reloading}><MainButton><IoIosAdd size="1.2rem" />Add client</MainButton></ModalClient></Col>
+                <Col style={{textAlign: "right"}}>
+                    <MainButton onClick={() => {setClientEdit(0); setModalShow(true)}}><IoIosAdd size="1.2rem" />Add client</MainButton>
+                    <ModalClient clientEdit={clientEdit} reloading={reloading} show={modalShow} onHide={() => setModalShow(false)}></ModalClient>
+                </Col>
             </Row>
             <Row>
                 <Col>
@@ -41,7 +47,7 @@ const Clients = () => {
                             <Col></Col>
                         </Row>
                         <br/>
-                        <TableMain data_body={clients} data_head={head}/>
+                        <TableMain data_body={clients} data_head={head} setModalShow={setModalShow} setClientEdit={setClientEdit}/>
                     </Card>
                 </Col>
             </Row>

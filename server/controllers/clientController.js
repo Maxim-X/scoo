@@ -1,5 +1,6 @@
 const {Client} = require("../models/models");
 const ApiError = require("../error/ApiError");
+const {Op} = require("sequelize");
 
 class CompanyController {
     async create(req, res, next){
@@ -39,6 +40,10 @@ class CompanyController {
 
     }
 
+    async edit(req, res, next){
+
+    }
+
     async getAll(req, res, next){
         const {id_company} = req.query;
         if (!id_company){
@@ -49,9 +54,20 @@ class CompanyController {
         return res.json(clients);
     }
 
-    async getOne(req, res){
+    async getOne(req, res, next){
+        console.log("1");
+        const {id_company, id_client} = req.query;
+        if (!id_company){
+            return next(ApiError.badRequest("Incorrect data entered"));
+        }
+        if (!id_client || id_client <= 0){
+            return next(ApiError.badRequest("Incorrect data entered"));
+        }
+        const client = await Client.findOne({where: {[Op.and]:[{id: id_client}, {companyId: id_company}]}});
 
+        return res.json(client);
     }
+
 
 }
 
