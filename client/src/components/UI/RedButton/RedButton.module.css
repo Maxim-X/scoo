@@ -1,16 +1,16 @@
-.mainBut svg {
+.redBut svg {
     margin-right: 6px ;
     color: #ffffff !important;
 }
 
-.mainBut {
+.redBut {
     padding: 8px 15px !important;
-    background: #4c70f0 !important;
+    background: #f13c47 !important;
     color: #ffffff !important;
     font-size: 16px !important;
-    border: 1px solid #4c70f0 !important;
+    border: 1px solid #f13c47 !important;
 }
 
-.mainBut:hover {
-    background: #4a6ce5 !important;
+.redBut:hover {
+    background: #e13943 !important;
 }

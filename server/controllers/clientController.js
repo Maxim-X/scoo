@@ -1,4 +1,4 @@
-const {Client} = require("../models/models");
+const {Client, User} = require("../models/models");
 const ApiError = require("../error/ApiError");
 const {Op} = require("sequelize");
 
@@ -15,6 +15,10 @@ class CompanyController {
         birthday = birthday.trim();
         if (!name || name.length == 0){
             return next(ApiError.badRequest("First and last name not specified"));
+        }
+        const check_user = User.findOne({where:{name}})
+        if (check_user){
+            return next(ApiError.badRequest("Client already added"));
         }
         if (!id_company || id_company <= 0){
             return next(ApiError.badRequest("Company not specified"));
@@ -41,6 +45,67 @@ class CompanyController {
     }
 
     async edit(req, res, next){
+        let {name, phone, email, series, numberPass, birthday} = req.body.client;
+        let {id_company} = req.body;
+        let {id_client} = req.body;
+
+        name = name.trim();
+        phone = phone.trim();
+        email = email.trim();
+        series = series.trim();
+        numberPass = numberPass.trim();
+        birthday = birthday.trim();
+        if (!name || name.length == 0){
+            return next(ApiError.badRequest("First and last name not specified"));
+        }
+        const client = await Client.findOne({where:{[Op.and]:[{id: id_client}, {companyId: id_company}]}})
+        if (!client){
+            return next(ApiError.badRequest("Client not specified"));
+        }
+        if (!id_company || id_company <= 0){
+            return next(ApiError.badRequest("Company not specified"));
+        }
+        if (!id_client || id_client <= 0){
+            return next(ApiError.badRequest("Client not specified"));
+        }
+        if (!phone || phone.length == 0){
+            phone = null;
+        }
+        if (!email || email.length == 0){
+            email = null;
+        }
+        if (!series || series.length == 0){
+            series = null;
+        }
+        if (!numberPass || numberPass.length == 0){
+            numberPass = null;
+        }
+        if (!birthday || birthday.length == 0){
+            birthday = null;
+        }
+
+        client.set({
+            name: name,
+            phone: phone,
+            email: email,
+            series: series,
+            numberPass: numberPass,
+            birthday: birthday,
+        });
+
+        const save = await client.save();
+        return res.json({status: true, message:"Client edit"});
+    }
+
+    async delete(req, res, next){
+        let {id_company} = req.query;
+        let {id_client} = req.query;
+        const client = await Client.findOne({where:{[Op.and]:[{id: id_client}, {companyId: id_company}]}})
+        if (!client){
+            return next(ApiError.badRequest("Client not specified"));
+        }
+        const del = await Client.destroy({where:{id: id_client}});
+        return res.json({status: true, message:"Client removed"});
 
     }
 
@@ -55,7 +120,6 @@ class CompanyController {
     }
 
     async getOne(req, res, next){
-        console.log("1");
         const {id_company, id_client} = req.query;
         if (!id_company){
             return next(ApiError.badRequest("Incorrect data entered"));

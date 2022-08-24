@@ -22,51 +22,30 @@ const ModalClient = ({reloading,clientEdit, ...props}) => {
     const [failAdd, setFailAdd] = useState("");
 
     const get_client_info = React.useMemo(async() => {
+        setSuccessAdd("");
+        setFailAdd("");
         if (clientEdit == 0){
-            return false;
-        }
-        try {
-            let client = await get_client(clientEdit, user.user.company.id);
-            console.log(client);
-            setName(client.name);
-            setPhone(client.phone);
-            setEmail(client.email);
-            setSeries(client.passport_series);
-            setNumberPass(client.passport_number);
-            setBirthday(client.birthday);
-        }catch (e){
+            setName("");
+            setPhone("");
+            setEmail("");
+            setSeries("");
+            setNumberPass("");
+            setBirthday("");
+        }else {
+            try {
+                let client = await get_client(clientEdit, user.user.company.id);
+                console.log(client);
+                setName(client.name);
+                setPhone(client.phone);
+                setEmail(client.email);
+                setSeries(client.passport_series);
+                setNumberPass(client.passport_number);
+                setBirthday(client.birthday);
+            } catch (e) {
 
+            }
         }
     },[clientEdit]);
-
-    // const get_client_info = async () =>{
-    //     try {
-    //         let client = await get_client(clientEdit, user.user.company.id);
-    //         console.log(client);
-    //         setName(client.name);
-    //         setPhone(client.phone);
-    //         setEmail(client.email);
-    //         setSeries(client.passport_series);
-    //         setNumberPass(client.passport_number);
-    //         setBirthday(client.birthday);
-    //     }catch (e){
-    //
-    //     }
-    // }
-
-    // console.log(clientEdit);
-    // if (clientEdit != 0){
-    //     get_client_info();
-    // }else{
-    //     // setName("");
-    //     // setPhone("");
-    //     // setEmail("");
-    //     // setSeries("");
-    //     // setNumberPass("");
-    //     // setBirthday("");
-    // }
-
-
 
 
     const add_client = async (a) =>{
@@ -81,7 +60,13 @@ const ModalClient = ({reloading,clientEdit, ...props}) => {
                 numberPass: numberPass,
                 birthday: birthday,
             };
-            let data = await add_clients(client, user.user.company.id);
+            let data;
+            if (clientEdit){
+                data = await edit_clients(client, user.user.company.id, clientEdit);
+            }else {
+                data = await add_clients(client, user.user.company.id);
+            }
+
             setSuccessAdd(data.message);
             reloading();
         }catch (e){
@@ -96,7 +81,7 @@ const ModalClient = ({reloading,clientEdit, ...props}) => {
             {/*{ React.cloneElement( children, { onClick: handleShow } ) }*/}
             <Modal {...props}> {/* show={show}  onHide={handleClose}*/}
             <Modal.Header closeButton>
-                <Modal.Title>Add client</Modal.Title>
+                <Modal.Title>{clientEdit ? 'Edit client':'Add client'}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 {successAdd && <Alert variant="primary">{successAdd}</Alert>}
@@ -132,7 +117,7 @@ const ModalClient = ({reloading,clientEdit, ...props}) => {
             </Modal.Body>
             <Modal.Footer>
                 <MainButton variant="primary" onClick={add_client}>
-                    Add client
+                    {clientEdit ? 'Edit client':'Add client'}
                 </MainButton>
             </Modal.Footer>
         </Modal>

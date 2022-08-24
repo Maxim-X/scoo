@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useMemo, useState} from 'react';
 import {Button, Card, Col, Container, Row, Table} from "react-bootstrap";
 import SearchInput from "../components/UI/SearchInput/SearchInput";
 import {login} from "../http/userAPI";
-import {all_clients} from "../http/companyAPI";
+import {all_clients, del_clients} from "../http/companyAPI";
 import data from "bootstrap/js/src/dom/data";
 import TableMain from "../components/TableMain";
 import {IoIosAdd} from "react-icons/io";
@@ -27,6 +27,18 @@ const Clients = () => {
         all_clients(user.user.company.id).then(clients => setClients(clients));
     }
 
+    const clickAddClient = () =>{
+        setClientEdit(0);
+        setModalShow(true);
+    }
+     const deleteClient = async(id_client) =>{
+        if (window.confirm('Are you sure you want to delete the user?')){
+            let dClient = await del_clients(user.user.company.id, id_client);
+            reloading();
+        }
+
+    }
+
 
     return (
         <Container fluid className="mainContainer">
@@ -35,7 +47,7 @@ const Clients = () => {
                     <h1 className="mainTitle mb-3">Your clients</h1>
                 </Col>
                 <Col style={{textAlign: "right"}}>
-                    <MainButton onClick={() => {setClientEdit(0); setModalShow(true)}}><IoIosAdd size="1.2rem" />Add client</MainButton>
+                    <MainButton onClick={() => {clickAddClient()}}><IoIosAdd size="1.2rem" />Add client</MainButton>
                     <ModalClient clientEdit={clientEdit} reloading={reloading} show={modalShow} onHide={() => setModalShow(false)}></ModalClient>
                 </Col>
             </Row>
@@ -47,7 +59,7 @@ const Clients = () => {
                             <Col></Col>
                         </Row>
                         <br/>
-                        <TableMain data_body={clients} data_head={head} setModalShow={setModalShow} setClientEdit={setClientEdit}/>
+                        <TableMain data_body={clients} deleteClient={deleteClient} data_head={head} setModalShow={setModalShow} setClientEdit={setClientEdit}/>
                     </Card>
                 </Col>
             </Row>
