@@ -23,7 +23,16 @@ const TableMain = ({data_head, data_body, setClientEdit, setModalShow, deleteCli
         if (search == ""){
             setPosts(data_body);
         }else{
-            setPosts(data_body.filter(post => post.name.toLowerCase().includes(search.toLowerCase())));
+            let sortNameData = data_body.filter(post => post.name.toLowerCase().includes(search.toLowerCase()));
+            let sortEmailData = data_body.filter(post => post.email.toLowerCase().includes(search.toLowerCase()));
+            let sortPhoneData = data_body.filter(post => post.phone.toLowerCase().includes(search.toLowerCase()));
+
+            let sortFullData = [...sortNameData, ...sortEmailData, ...sortPhoneData];
+            sortFullData = sortFullData.reduce((r, i) =>
+                    !r.some(j => JSON.stringify(i) === JSON.stringify(j)) ? [...r, i] : r
+                , [])
+            setPosts(sortFullData);
+
         }
         setSelectedSort("");
         setReverse(false);
