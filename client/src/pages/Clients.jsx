@@ -16,12 +16,11 @@ const Clients = () => {
     const [head, setHead] = useState([{name: "Name", el: "name"},{name: "Email", el: "email"}, {name: "Phone", el: "phone"}, {name: "Birthday", el: "birthday"}]);
     const [modalShow, setModalShow] = React.useState(false);
     const [clientEdit, setClientEdit] = useState(0);
+    const [search, setSearch] = useState("");
 
     useEffect(()=>{
         reloading();
     },[]);
-
-
 
     const reloading = () => {
         all_clients(user.user.company.id).then(clients => setClients(clients));
@@ -36,8 +35,10 @@ const Clients = () => {
             let dClient = await del_clients(user.user.company.id, id_client);
             reloading();
         }
-
     }
+
+
+
 
 
     return (
@@ -55,11 +56,11 @@ const Clients = () => {
                 <Col>
                     <Card className="card p-4" >
                         <Row>
-                            <Col><SearchInput placeholder="Search..."/></Col>
+                            <Col><SearchInput value={search} onChange={e => {setSearch(e.target.value)}} placeholder="Search..."/></Col>
                             <Col></Col>
                         </Row>
                         <br/>
-                        <TableMain data_body={clients} deleteClient={deleteClient} data_head={head} setModalShow={setModalShow} setClientEdit={setClientEdit}/>
+                        <TableMain data_body={clients} data_search={search} data_head={head} setModalShow={setModalShow} setClientEdit={setClientEdit} deleteClient={deleteClient}/>
                     </Card>
                 </Col>
             </Row>

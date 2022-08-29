@@ -12,6 +12,8 @@ const SearchInput = (props) => {
                 placeholder={props.placeholder}
                 aria-label={props.placeholder}
                 aria-describedby="basic-addon2"
+                value={props.value}
+                onChange={props.onChange}
             />
         </InputGroup>
     );
