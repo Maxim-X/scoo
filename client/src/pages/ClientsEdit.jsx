@@ -2,10 +2,6 @@ import React, {useContext, useState} from 'react';
 import {useParams, useNavigate, Redirect} from "react-router-dom";
 import {Alert, Card, Col, Container, Form, Row} from "react-bootstrap";
 import MainButton from "../components/UI/MainButton/MainButton";
-import {IoIosAdd} from "react-icons/io";
-import ModalClient from "../components/UI/ModalClient/ModalClient";
-import SearchInput from "../components/UI/SearchInput/SearchInput";
-import TableMain from "../components/TableMain";
 import {Context} from "../index";
 import {
     add_clients, add_email_client,
@@ -16,6 +12,8 @@ import {
     get_phone_client
 } from "../http/companyAPI";
 import RedButton from "../components/UI/RedButton/RedButton";
+import {RiDeleteBack2Fill} from "react-icons/ri";
+import MiniRedButton from "../components/UI/MiniRedButton/MiniRedButton";
 
 const ClientsEdit = () => {
     const navigate = useNavigate();
@@ -121,14 +119,16 @@ const ClientsEdit = () => {
 
     const add_phone = async () =>{
         setFailAdd("");
-        try {
-            if (id) {
-                const add_phone = await add_phone_client(phone, user.user.company.id, id);
+        if (phone.trim() != "") {
+            try {
+                if (id) {
+                    const add_phone = await add_phone_client(phone, user.user.company.id, id);
+                }
+                setPhonesClient([...phonesClient, phone]);
+                setPhone("");
+            } catch (e) {
+                setFailAdd(e.response.data.message);
             }
-            setPhonesClient([...phonesClient, phone]);
-            setPhone("");
-        }catch (e){
-            setFailAdd(e.response.data.message);
         }
     }
 
@@ -144,15 +144,17 @@ const ClientsEdit = () => {
         }
     }
     const add_email = async (email) =>{
-        setFailAdd("");
-        try {
-            if (id) {
-                const add_email = await add_email_client(email, user.user.company.id, id);
+        if (email.trim() != "") {
+            setFailAdd("");
+            try {
+                if (id) {
+                    const add_email = await add_email_client(email, user.user.company.id, id);
+                }
+                setEmailClient([...emailClient, email]);
+                setEmail("");
+            } catch (e) {
+                setFailAdd(e.response.data.message);
             }
-            setEmailClient([...emailClient, email]);
-            setEmail("");
-        }catch (e){
-            setFailAdd(e.response.data.message);
         }
     }
 
@@ -188,38 +190,16 @@ const ClientsEdit = () => {
             </Row>
             <Row>
                 <Col>
-                    <Card className="card p-4" >
-                        {successAdd && <Alert variant="primary">{successAdd}</Alert>}
-                        {failAdd && <Alert variant="danger">{failAdd}</Alert>}
+                    {successAdd && <Alert variant="primary">{successAdd}</Alert>}
+                    {failAdd && <Alert variant="danger">{failAdd}</Alert>}
+                    <Card className="card p-4 mb-3">
+
                         <Form>
                             <Form.Group className="mb-3">
                                 <Form.Label>Name and surname</Form.Label>
                                 <Form.Control value={name} onChange={e => setName(e.target.value)} type="text" placeholder="Enter name and surname" required/>
                             </Form.Group>
-                            <Form.Group className="mb-3">
-                                <Form.Label>Phone</Form.Label>
-                                <Row>
-                                    <Col><Form.Control value={phone} onChange={e => setPhone(e.target.value)} type="tel" placeholder="Enter phone number" /></Col>
-                                    <Col md="auto"><MainButton variant="primary" onClick={e => add_phone(phone)}>Add phone</MainButton></Col>
-                                </Row>
-                            </Form.Group>
-                            <div>
-                                {phonesClient.map((phone)=>
-                                    <div>{phone}<RedButton onClick={e => del_phone(phone)}>X</RedButton></div>
-                                )}
-                            </div>
-                            <Form.Group className="mb-3">
-                                <Form.Label>E-mail</Form.Label>
-                                <Row>
-                                    <Col><Form.Control value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder="Enter email" /></Col>
-                                    <Col><MainButton variant="primary" onClick={e => add_email(email)}>Add email</MainButton></Col>
-                                </Row>
-                            </Form.Group>
-                            <div>
-                                {emailClient.map((email)=>
-                                    <div>{email}<RedButton onClick={e => del_email(email)}>X</RedButton></div>
-                                )}
-                            </div>
+
                             <Row>
                                 <Col><Form.Group className="mb-3">
                                     <Form.Label>Passport number</Form.Label>
@@ -242,6 +222,34 @@ const ClientsEdit = () => {
                                 <Form.Control value={birthday} onChange={e => setBirthday(e.target.value)} type="date" placeholder="Enter date of birth" />
                             </Form.Group>
                         </Form>
+                    </Card>
+                    <Card className="card p-4 mb-3" >
+                        <Form.Group className="mb-3">
+                            <Form.Label>Phone</Form.Label>
+                            <Row>
+                                <Col><Form.Control value={phone} onChange={e => setPhone(e.target.value)} type="tel" placeholder="Enter phone number" /></Col>
+                                <Col md="auto"><MainButton variant="primary" onClick={e => add_phone(phone)}>Add phone</MainButton></Col>
+                            </Row>
+                        </Form.Group>
+                        <Card className="card p-3 mb-3 d-flex gap-4 flex-row">
+                            {phonesClient.map((phone)=>
+                                <span>{phone} <MiniRedButton onClick={e => del_phone(phone)}><RiDeleteBack2Fill/></MiniRedButton></span>
+                            )}
+                        </Card>
+                    </Card>
+                    <Card className="card p-4" >
+                        <Form.Group className="mb-3">
+                            <Form.Label>E-mail</Form.Label>
+                            <Row>
+                                <Col><Form.Control value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder="Enter email" /></Col>
+                                <Col><MainButton variant="primary" onClick={e => add_email(email)}>Add email</MainButton></Col>
+                            </Row>
+                        </Form.Group>
+                        <Card className="card p-3 mb-3 d-flex gap-4 flex-row">
+                            {emailClient.map((email)=>
+                                <span>{email} <MiniRedButton onClick={e => del_email(email)}><RiDeleteBack2Fill/></MiniRedButton></span>
+                            )}
+                        </Card>
                     </Card>
                 </Col>
             </Row>

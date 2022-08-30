@@ -31,7 +31,7 @@ const Header = () => {
         <Container fluid className="p-0">
             <Row className="m-0">
                 {!isTabletOrMobile &&
-                <Col style={{width: "260px", maxWidth: "260px"}} className="p-0 vh-100">
+                <Col style={{width: "260px", maxWidth: "260px"}} className="p-0 vh-100 position-sticky top-0">
                     <div className="left_main_menu">
                         <Link to="/" style={{textDecoration: "none"}}>
                         <Navbar className="main-logo">

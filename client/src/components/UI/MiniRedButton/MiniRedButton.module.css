@@ -1,0 +1,16 @@
+.redBut svg {
+    color: #ffffff !important;
+}
+
+.redBut {
+    padding: 3px 6px !important;
+    background: #f13c47 !important;
+    color: #ffffff !important;
+    font-size: 16px !important;
+    border: 1px solid #f13c47 !important;
+    gap: 10px;
+}
+
+.redBut:hover {
+    background: #e13943 !important;
+}
