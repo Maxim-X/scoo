@@ -9,6 +9,13 @@ router.post('/edit', authMiddleware, checkAccessCompanyMiddleware, clientControl
 router.delete('/delete', authMiddleware, checkAccessCompanyMiddleware, clientController.delete);
 router.get('/all', authMiddleware, checkAccessCompanyMiddleware, clientController.getAll);
 router.get('/one', authMiddleware, checkAccessCompanyMiddleware, clientController.getOne);
+router.post('/add_phone', authMiddleware, checkAccessCompanyMiddleware, clientController.addPhone);
+router.post('/del_phone', authMiddleware, checkAccessCompanyMiddleware, clientController.delPhone);
+router.get('/all_phones', authMiddleware, checkAccessCompanyMiddleware, clientController.getAllPhones);
+
+router.post('/add_email', authMiddleware, checkAccessCompanyMiddleware, clientController.addEmail);
+router.post('/del_email', authMiddleware, checkAccessCompanyMiddleware, clientController.delEmail);
+router.get('/all_emails', authMiddleware, checkAccessCompanyMiddleware, clientController.getAllEmail);
 
 
 module.exports = router;

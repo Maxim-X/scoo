@@ -3,24 +3,34 @@ import {Col, Container, Navbar, Row} from "react-bootstrap";
 import {AiFillExperiment} from "react-icons/ai";
 import {Link, Outlet, useNavigate} from "react-router-dom";
 import {Context} from "../index";
-
+import { useMediaQuery } from 'react-responsive'
 import {LOGIN_ROUTE} from "../utils/consts";
 import {AiFillGitlab} from "react-icons/ai";
 import TopMenu from "./UI/TopMenu/TopMenu";
+
+
+
 
 const Header = () => {
     const {user} = useContext(Context);
     const navigate = useNavigate();
 
+    const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
+    const isTabletOrMobile = useMediaQuery({ query: '(max-width: 768px)' })
+    const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
+    const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
+    console.log(isTabletOrMobile);
     const logOut = () => {
         user.setUser({})
         user.setIsAuth(false);
         localStorage.removeItem('token');
         window.location.href = LOGIN_ROUTE;
     }
+
     return (
         <Container fluid className="p-0">
             <Row className="m-0">
+                {!isTabletOrMobile &&
                 <Col style={{width: "260px", maxWidth: "260px"}} className="p-0 vh-100">
                     <div className="left_main_menu">
                         <Link to="/" style={{textDecoration: "none"}}>
@@ -83,7 +93,7 @@ const Header = () => {
                             </li>
                         </ul>
                     </div>
-                </Col>
+                </Col>}
                 <Col className="p-0">
                     <TopMenu />
                     <Outlet />

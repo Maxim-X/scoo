@@ -1,4 +1,3 @@
-
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import AppRouter from "./components/AppRouter";
 import Login from "./pages/Login";
@@ -12,11 +11,6 @@ const App = observer( () => {
     const {user} = useContext(Context);
     const [loading, setLoading] = useState(true);
     const [roleAccess, setRoleAccess] = useState({});
-
-    // if (user.isAuth){
-    //     const role = getRole(user.user.role);
-    //     setRoleAccess(role);
-    // }
 
     useEffect(() => {
         check().then(data => {

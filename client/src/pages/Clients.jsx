@@ -2,26 +2,29 @@ import React, {useContext, useEffect, useMemo, useState} from 'react';
 import {Button, Card, Col, Container, Form, Row, Table} from "react-bootstrap";
 import SearchInput from "../components/UI/SearchInput/SearchInput";
 import {login} from "../http/userAPI";
-import {all_clients, del_clients} from "../http/companyAPI";
+import {all_clients, del_clients, get_phone_client} from "../http/companyAPI";
 import data from "bootstrap/js/src/dom/data";
 import TableMain from "../components/TableMain";
 import {IoIosAdd} from "react-icons/io";
 import MainButton from "../components/UI/MainButton/MainButton";
 import ModalClient from "../components/UI/ModalClient/ModalClient";
 import {Context} from "../index";
+import {useNavigate} from "react-router-dom";
+import {forEach} from "react-bootstrap/ElementChildren";
 
 const Clients = () => {
     const {user} = useContext(Context);
     const [clients, setClients] = useState([]);
-    const [head, setHead] = useState([{name: "Name", el: "name", use: true, def: true},{name: "Email", el: "email", use: true, def: true}, {name: "Phone", el: "phone", use: true, def: true}, {name: "Birthday", el: "birthday", use: true, def: false}, {name: "Passport series", el: "passport_series", use: false, def: false}, {name: "Passport number", el: "passport_number", use: false, def: false}]);
+    const [head, setHead] = useState([{name: "Name", el: "name", use: true, def: true},{name: "Email", el: "email", use: true, def: true}, {name: "Phone", el: "phone", use: true, def: true}, {name: "Birthday", el: "birthday", use: true, def: false}, {name: "Driver license", el: "driver_license_number", use: false, def: false}, {name: "Passport number", el: "passport_number", use: false, def: false}]);
     const [modalShow, setModalShow] = React.useState(false);
     const [clientEdit, setClientEdit] = useState(0);
     const [search, setSearch] = useState("");
+    const navigate = useNavigate();
 
     useEffect(()=>{
         reloading();
     },[]);
-
+    console.log(clients);
     const reloading = () => {
         all_clients(user.user.company.id).then(clients => setClients(clients));
     }
@@ -53,7 +56,7 @@ const Clients = () => {
                     <h1 className="mainTitle mb-3">Your clients</h1>
                 </Col>
                 <Col style={{textAlign: "right"}}>
-                    <MainButton onClick={() => {clickAddClient()}}><IoIosAdd size="1.2rem" />Add client</MainButton>
+                    <MainButton onClick={() => navigate('/clients_edit')}><IoIosAdd size="1.2rem" />Add client</MainButton>
                     <ModalClient clientEdit={clientEdit} reloading={reloading} show={modalShow} onHide={() => setModalShow(false)}></ModalClient>
                 </Col>
             </Row>

@@ -1,9 +1,10 @@
 import Login from "./pages/Login";
-import {ALL_ROUTE, CLIENTS_ROUTE, DASHBOARD_ROUTE, LOGIN_ROUTE, STOCK_ROUTE} from "./utils/consts";
+import {ALL_ROUTE, CLIENTS_ROUTE, DASHBOARD_ROUTE, LOGIN_ROUTE, STOCK_ROUTE, CLIENTS_EDIT_ROUTE} from "./utils/consts";
 import All from "./pages/All";
 import Dashboard from "./pages/Dashboard";
 import Stock from "./pages/Stock";
 import Clients from "./pages/Clients";
+import ClientsEdit from "./pages/ClientsEdit";
 
 
 export const authRoutes = {
@@ -11,6 +12,8 @@ export const authRoutes = {
         {path: DASHBOARD_ROUTE, component: <Dashboard/>},
         {path: STOCK_ROUTE, component: <Stock/>},
         {path: CLIENTS_ROUTE, component: <Clients/>},
+        {path: CLIENTS_EDIT_ROUTE, component: <ClientsEdit/>},
+        {path: CLIENTS_EDIT_ROUTE + '/:id', component: <ClientsEdit/>},
         {path: "*", component: <Dashboard/>},
     ],
     hidHeader : [

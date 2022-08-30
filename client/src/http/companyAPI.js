@@ -24,3 +24,32 @@ export const get_client = async (id_client, id_company) => {
     const {data} = await $authHost.get('api/client/one', {params:{id_client, id_company}});
     return data;
 }
+
+export const add_phone_client = async (phone, id_company, id_client) => {
+    const {data} = await $authHost.post('api/client/add_phone', {number:phone, id_company, id_client});
+    return data;
+}
+
+export const del_phone_client = async (phone, id_company, id_client) => {
+    const {data} = await $authHost.post('api/client/del_phone', {number:phone, id_company, id_client});
+    return data;
+}
+
+export const get_phone_client = async (id_company, id_client) => {
+    const {data} = await $authHost.get('api/client/all_phones', {params:{id_company, id_client}});
+    return data;
+}
+export const add_email_client = async (email, id_company, id_client) => {
+    const {data} = await $authHost.post('api/client/add_email', {email:email, id_company, id_client});
+    return data;
+}
+
+export const del_email_client = async (email, id_company, id_client) => {
+    const {data} = await $authHost.post('api/client/del_email', {email:email, id_company, id_client});
+    return data;
+}
+
+export const get_emails_client = async (id_company, id_client) => {
+    const {data} = await $authHost.get('api/client/all_emails', {params:{id_company, id_client}});
+    return data;
+}

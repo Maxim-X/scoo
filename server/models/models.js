@@ -25,12 +25,26 @@ const RoleAccess = sequelize.define( 'role_access', {
 const Client = sequelize.define( 'client', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     name: {type: DataTypes.STRING, allowNull: false},
-    phone: {type: DataTypes.STRING, allowNull: true},
-    email: {type: DataTypes.STRING, allowNull: true},
-    passport_series: {type: DataTypes.STRING, allowNull: true},
+    driver_license_number: {type: DataTypes.STRING, allowNull: true},
     passport_number: {type: DataTypes.STRING, allowNull: true},
     birthday: {type: DataTypes.DATEONLY, allowNull: true},
+    another_document_name: {type: DataTypes.STRING, allowNull: true},
+    another_document_number: {type: DataTypes.STRING, allowNull: true},
     //id_company :{type: DataTypes.INTEGER, allowNull: false},
+});
+
+const PhoneNumbers = sequelize.define('phone_numbers',{
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    number: {type: DataTypes.STRING, allowNull: false},
+});
+const ClientsEmail  = sequelize.define('clients_email',{
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    email: {type: DataTypes.STRING, allowNull: false},
+});
+
+const Images = sequelize.define('images',{
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    path: {type: DataTypes.STRING, allowNull: false},
 });
 
 Company.hasMany(RoleAccess);
@@ -39,12 +53,24 @@ RoleAccess.belongsTo(Company);
 Company.hasMany(Client);
 Client.belongsTo(Company);
 
-RoleAccess.hasOne(User)
+RoleAccess.hasOne(User);
 User.belongsTo(RoleAccess);
+
+Client.hasMany(PhoneNumbers);
+PhoneNumbers.belongsTo(Client);
+
+Client.hasMany(ClientsEmail);
+ClientsEmail.belongsTo(Client);
+
+Client.hasMany(Images);
+Images.belongsTo(Client);
 
 module.exports = {
     Company,
     User,
     RoleAccess,
-    Client
+    Client,
+    PhoneNumbers,
+    ClientsEmail,
+    Images
 };

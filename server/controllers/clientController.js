@@ -1,36 +1,34 @@
-const {Client, User} = require("../models/models");
+const {Client, User, PhoneNumbers, ClientsEmail} = require("../models/models");
 const ApiError = require("../error/ApiError");
 const {Op} = require("sequelize");
 
-class CompanyController {
+class ClientController {
     async create(req, res, next){
-        let {name, phone, email, series, numberPass, birthday} = req.body.client;
+        let {name, email, driver_license_number, numberPass, birthday, another_document_name, another_document_number, phonesClient} = req.body.client;
         let {id_company} = req.body;
 
         name = name.trim();
-        phone = phone.trim();
         email = email.trim();
-        series = series.trim();
+        driver_license_number = driver_license_number.trim();
         numberPass = numberPass.trim();
         birthday = birthday.trim();
+        another_document_name = another_document_name.trim();
+        another_document_number = another_document_number.trim();
         if (!name || name.length == 0){
             return next(ApiError.badRequest("First and last name not specified"));
         }
-        const check_user = User.findOne({where:{name}})
+        const check_user = await Client.findOne({where:{name}})
         if (check_user){
             return next(ApiError.badRequest("Client already added"));
         }
         if (!id_company || id_company <= 0){
             return next(ApiError.badRequest("Company not specified"));
         }
-        if (!phone || phone.length == 0){
-            phone = null;
-        }
         if (!email || email.length == 0){
             email = null;
         }
-        if (!series || series.length == 0){
-            series = null;
+        if (!driver_license_number || driver_license_number.length == 0){
+            driver_license_number = null;
         }
         if (!numberPass || numberPass.length == 0){
             numberPass = null;
@@ -38,23 +36,46 @@ class CompanyController {
         if (!birthday || birthday.length == 0){
             birthday = null;
         }
-        const add_client = await Client.create({name, phone, email, passport_series: series, passport_number: numberPass, birthday, companyId: id_company});
+        if (!another_document_name || another_document_name.length == 0){
+            another_document_name = null;
+        }
+        if (!another_document_number || another_document_number.length == 0){
+            another_document_number = null;
+        }
+        const add_client = await Client.create(
+            {
+                name,
+                email,
+                driver_license_number: driver_license_number,
+                passport_number: numberPass,
+                birthday,
+                companyId: id_company,
+                another_document_name: another_document_name,
+                another_document_number: another_document_number
+            });
+
+        phonesClient.map(async (number)=>{
+            if (number && number.length > 5){
+                const phone = await PhoneNumbers.create({number,clientId: add_client.id});
+            }
+        });
 
         return res.json({status: true, message:"Client added"});
 
     }
 
     async edit(req, res, next){
-        let {name, phone, email, series, numberPass, birthday} = req.body.client;
-        let {id_company} = req.body;
-        let {id_client} = req.body;
+        let {name, email, driver_license_number, numberPass, birthday, another_document_name, another_document_number} = req.body.client;
+        let {id_company, id_client} = req.body;
 
-        name = name.trim();
-        phone = phone.trim();
-        email = email.trim();
-        series = series.trim();
-        numberPass = numberPass.trim();
-        birthday = birthday.trim();
+        if(name != null) name = name.trim();
+        if(email != null) email = email.trim();
+        if(driver_license_number != null) driver_license_number = driver_license_number.trim();
+        if(numberPass != null) numberPass = numberPass.trim();
+        if(birthday != null) birthday = birthday.trim();
+        if(another_document_name != null) another_document_name = another_document_name.trim();
+        if(another_document_number != null) another_document_number = another_document_number.trim();
+
         if (!name || name.length == 0){
             return next(ApiError.badRequest("First and last name not specified"));
         }
@@ -68,14 +89,11 @@ class CompanyController {
         if (!id_client || id_client <= 0){
             return next(ApiError.badRequest("Client not specified"));
         }
-        if (!phone || phone.length == 0){
-            phone = null;
-        }
         if (!email || email.length == 0){
             email = null;
         }
-        if (!series || series.length == 0){
-            series = null;
+        if (!driver_license_number || driver_license_number.length == 0){
+            driver_license_number = null;
         }
         if (!numberPass || numberPass.length == 0){
             numberPass = null;
@@ -83,19 +101,27 @@ class CompanyController {
         if (!birthday || birthday.length == 0){
             birthday = null;
         }
+        if (!another_document_name || another_document_name.length == 0){
+            birthday = null;
+        }
+        if (!another_document_number || another_document_number.length == 0){
+            birthday = null;
+        }
 
         client.set({
             name: name,
-            phone: phone,
             email: email,
-            series: series,
+            driver_license_number: driver_license_number,
             numberPass: numberPass,
             birthday: birthday,
+            another_document_name: another_document_name,
+            another_document_number: another_document_number,
         });
 
         const save = await client.save();
         return res.json({status: true, message:"Client edit"});
     }
+
 
     async delete(req, res, next){
         let {id_company} = req.query;
@@ -115,7 +141,22 @@ class CompanyController {
             return next(ApiError.badRequest("Incorrect data entered"));
         }
         const clients = await Client.findAll({where: {companyId: id_company}});
+        for (const client of clients) {
+            console.log(client);
+            const phones = await PhoneNumbers.findAll({where: {clientId: client.id}, attributes:['number']});
+            let all_numbers = "";
+            for (const phone of phones){
+                all_numbers = all_numbers+" "+phone.number;
+            }
 
+            const emails = await ClientsEmail.findAll({where: {clientId: client.id}, attributes:['email']});
+            let all_emails = "";
+            for (const email of emails){
+                all_emails = all_emails+" "+email.email;
+            }
+            client['dataValues']['phone'] = all_numbers;
+            client['dataValues']['email'] = all_emails;
+        }
         return res.json(clients);
     }
 
@@ -132,7 +173,89 @@ class CompanyController {
         return res.json(client);
     }
 
+    async addPhone(req, res, next){
+        let {id_company, id_client, number} = req.body;
+        number = number.trim();
+        if (!id_company){
+            return next(ApiError.badRequest("Incorrect data entered"));
+        }
+        if (!id_client || id_client <= 0){
+            return next(ApiError.badRequest("Incorrect data entered"));
+        }
+        if (!number || number.length <= 5){
+            return next(ApiError.badRequest("Invalid phone number entered"));
+        }
+        const phone_check = await PhoneNumbers.findOne({where: {[Op.and]:[{clientId: id_client}, {number}]}})
+        if (phone_check){
+            return next(ApiError.badRequest("Number already added"));
+        }
+        const phone = await PhoneNumbers.create({number,clientId: id_client});
+        return res.json(phone);
+    }
+
+    async delPhone(req, res,next){
+        let {id_client, number} = req.body;
+        number = number.trim();
+        if (!id_client || id_client <= 0){
+            return next(ApiError.badRequest("Incorrect data entered"));
+        }
+        if (!number || number.length <= 5){
+            return next(ApiError.badRequest("Invalid phone number entered"));
+        }
+        const del_phone = await PhoneNumbers.destroy({where:{[Op.and]:[{number},{clientId: id_client}]}});
+        return res.json(del_phone);
+    }
+
+    async getAllPhones(req, res, next){
+        const {id_client} = req.query;
+        if (!id_client){
+            return next(ApiError.badRequest("Incorrect data entered"));
+        }
+        const all_phones = await PhoneNumbers.findAll({where: {clientId: id_client}});
+
+        return res.json(all_phones);
+    }
+
+    async addEmail(req, res, next){
+        let {id_client, email} = req.body;
+        if(email != null) email = email.trim();
+        if (!id_client || id_client <= 0){
+            return next(ApiError.badRequest("Incorrect data entered"));
+        }
+        if (!email || email.length <= 5){
+            return next(ApiError.badRequest("Invalid Email entered"));
+        }
+        const email_check = await ClientsEmail.findOne({where: {[Op.and]:[{clientId: id_client}, {email}]}})
+        if (email_check){
+            return next(ApiError.badRequest("Email already added"));
+        }
+        const email_add = await ClientsEmail.create({email,clientId: id_client});
+        return res.json(email_add);
+    }
+
+    async delEmail(req, res,next){
+        let {id_client, email} = req.body;
+        if(email != null) email = email.trim();
+        if (!id_client || id_client <= 0){
+            return next(ApiError.badRequest("Incorrect data entered"));
+        }
+        if (!email || email.length <= 5){
+            return next(ApiError.badRequest("Invalid Email entered"));
+        }
+        const del_email = await ClientsEmail.destroy({where:{[Op.and]:[{email},{clientId: id_client}]}});
+        return res.json(del_email);
+    }
+
+    async getAllEmail(req, res, next){
+        const {id_client} = req.query;
+        if (!id_client){
+            return next(ApiError.badRequest("Incorrect data entered"));
+        }
+        const all_email= await ClientsEmail.findAll({where: {clientId: id_client}});
+
+        return res.json(all_email);
+    }
 
 }
 
-module.exports = new CompanyController();
+module.exports = new ClientController();
