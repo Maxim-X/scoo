@@ -17,7 +17,8 @@ router.post('/add_email', authMiddleware, checkAccessCompanyMiddleware, clientCo
 router.post('/del_email', authMiddleware, checkAccessCompanyMiddleware, clientController.delEmail);
 router.get('/all_emails', authMiddleware, checkAccessCompanyMiddleware, clientController.getAllEmail);
 
-router.post('/upload_images', authMiddleware, clientController.uploadImages);
+router.post('/upload_images', authMiddleware,checkAccessCompanyMiddleware, clientController.uploadImages);
+router.get('/get_all_images',checkAccessCompanyMiddleware, authMiddleware, clientController.getAllImages);
 
 
 module.exports = router;

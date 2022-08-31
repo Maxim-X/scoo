@@ -5,7 +5,7 @@ const uuid = require('uuid');
 const path = require('path');
 class ClientController {
     async create(req, res, next){
-        let {name, email, driver_license_number, numberPass, birthday, another_document_name, another_document_number, phonesClient} = req.body.client;
+        let {name, email, driver_license_number, numberPass, birthday, another_document_name, another_document_number, phonesClient, emailClient} = req.body.client;
         let {id_company} = req.body;
 
         name = name.trim();
@@ -61,7 +61,13 @@ class ClientController {
             }
         });
 
-        return res.json({status: true, message:"Client added"});
+        emailClient.map(async (email)=>{
+            if (email && email.length > 5){
+                const add_email = await ClientsEmail.create({email,clientId: add_client.id});
+            }
+        });
+
+        return res.json({status: true, message:"Client added", client_id: add_client.id});
 
     }
 
@@ -261,28 +267,30 @@ class ClientController {
         try {
             const {id_client} = req.body;
             const {images} = req.files;
+            console.log(id_client);
+            console.log(images);
             const expanse = images.name.split('.').pop();
             if (['png', 'jpg', 'jpeg'].indexOf(expanse) < 0){
                 return next(ApiError.badRequest("Photo extension is not supported"));
             }
-
             let fileName = uuid.v4() + "."+expanse
             images.mv(path.resolve(__dirname, '..', 'static', 'images', fileName));
-
             const add_images = ImagesClient.create({path: fileName, clientId: id_client});
             return res.json(add_images);
         }catch (e){
             return next(ApiError.badRequest("Incorrect data entered"));
         }
+    }
 
+    async getAllImages(req, res, next){
+        const {id_client} = req.query;
+        console.log(id_client);
+        if (!id_client){
+            return next(ApiError.badRequest("Incorrect data entered"));
+        }
+        const all_images= await ImagesClient.findAll({where: {clientId: id_client}});
 
-        // const path = "../static/images/"+images.name;
-        // try {
-        //     images.mv(path);
-        //     const add_images = ImagesClient.create({path, clientId: id_client});
-        // }catch (e){
-        //
-        // }
+        return res.json(all_images);
     }
 
 }

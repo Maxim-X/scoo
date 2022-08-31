@@ -1,0 +1,67 @@
+.dragAndDrop{
+
+}
+.dragAndDropZona{
+    display: grid;
+    text-align: center;
+    background: hsl(227deg 85% 62% / 20%) !important;
+    height: 100%;
+    border: 2px solid #4c70f0 !important;
+    border-radius: 6px;
+    color: #2b4bbd;
+}
+.dragAndDropZonaActive{
+    display: grid;
+    text-align: center;
+    background: hsl(227deg 85% 62% / 20%) !important;
+    height: 100%;
+    border: 2px dashed #4c70f0 !important;
+    border-radius: 6px;
+    color: #2b4bbd;
+}
+.dragAndDropZona svg {
+    margin: auto;
+    font-size: 52px;
+}
+.dragAndDropZonaActive svg {
+    margin: auto;
+    font-size: 52px;
+}
+.allFilesZona {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.allFilesZona img {
+    height: 100%;
+    width: 100% !important;
+    cursor: alias;
+}
+
+.fileBlock {
+    width: 25%;
+    position: relative;
+}
+
+.butDelete{
+    color: white;
+    background-color: #f13c47 !important;
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    left: 0px;
+    text-align: center;
+    cursor: pointer;
+    padding: 4px 0px;
+    font-weight: 100;
+    font-size: 14px;
+    opacity: 0;
+}
+
+.butDelete:hover{
+    background-color: #e13943 !important;
+}
+.fileBlock:hover .butDelete{
+    opacity: 1;
+}

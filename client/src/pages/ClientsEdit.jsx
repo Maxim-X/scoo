@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {useParams, useNavigate, Redirect} from "react-router-dom";
 import {Alert, Card, Col, Container, Form, Row} from "react-bootstrap";
 import MainButton from "../components/UI/MainButton/MainButton";
@@ -7,21 +7,19 @@ import {
     add_clients, add_email_client,
     add_phone_client, del_email_client,
     del_phone_client,
-    edit_clients,
+    edit_clients, get_all_images,
     get_client, get_emails_client,
     get_phone_client, upload_images_client
 } from "../http/companyAPI";
 import RedButton from "../components/UI/RedButton/RedButton";
 import {RiDeleteBack2Fill} from "react-icons/ri";
 import MiniRedButton from "../components/UI/MiniRedButton/MiniRedButton";
+import DropZona from "../components/UI/DropZona/DropZona";
 
 const ClientsEdit = () => {
     const navigate = useNavigate();
     const {id} = useParams();
     const back = () =>{navigate(`/clients`);}
-
-
-
 
     const {user} = useContext(Context);
     const [show, setShow] = useState(false);
@@ -36,13 +34,19 @@ const ClientsEdit = () => {
     const [phonesClient, setPhonesClient] = useState([]);
     const [emailClient, setEmailClient] = useState([]);
 
+    const [saveUploadImages, setSaveUploadImages] = useState([]);
+
     const [anotherDocumentName, setAnotherDocumentName] = useState('');
     const [anotherDocumentNumber, setAnotherDocumentNumber] = useState('');
 
     const [successAdd, setSuccessAdd] = useState("");
     const [failAdd, setFailAdd] = useState("");
 
+    const [allFiles, setAllFiles] = useState([]);
 
+    useEffect(() => {
+        get_all_images(user.user.company.id, id).then(images => setAllFiles(images));
+    }, []);
 
     const get_client_info = React.useMemo(async() => {
 
@@ -105,13 +109,26 @@ const ClientsEdit = () => {
                 another_document_name: anotherDocumentName,
                 another_document_number: anotherDocumentNumber,
                 phonesClient: phonesClient,
+                emailClient: emailClient,
             };
             let data;
             if (id){
                 data = await edit_clients(client, user.user.company.id, id);
             }else {
-                data = await add_clients(client, user.user.company.id);
-            }
+                    data = await add_clients(client, user.user.company.id);
+                console.log(saveUploadImages.length)
+                console.log(data)
+                    if (saveUploadImages.length != 0){
+                        for (let i = 0; i < saveUploadImages.length; i++){
+                            const FormData1 = new FormData();
+                            FormData1.append('images', saveUploadImages[i][0]);
+                            FormData1.append('id_company', user.user.company.id);
+                            FormData1.append('id_client', data.client_id);
+                            const upload = await upload_images_client(FormData1);
+                        }
+                    }
+
+                }
 
             setSuccessAdd(data.message);
         }catch (e){
@@ -146,8 +163,8 @@ const ClientsEdit = () => {
         }
     }
     const add_email = async (email) =>{
+        setFailAdd("");
         if (email.trim() != "") {
-            setFailAdd("");
             try {
                 if (id) {
                     const add_email = await add_email_client(email, user.user.company.id, id);
@@ -171,41 +188,6 @@ const ClientsEdit = () => {
             setFailAdd(e.response.data.message);
         }
     }
-
-    //
-    const [drag, setDrag] = useState(false);
-
-    const dragStartHandler = (e) =>{
-        e.preventDefault();
-        console.log("111");
-        setDrag(true);
-    }
-
-    const dragLeaveHandler = (e) =>{
-        e.preventDefault();
-        console.log("222");
-        setDrag(false);
-    }
-
-    function drop(e){
-        e.preventDefault();
-        e.stopPropagation();
-        let files = e.dataTransfer.files;
-        console.log(files);
-
-        const FormData1 = new FormData();
-        FormData1.append('images', files[0]);
-        FormData1.append('id_company', user.user.company.id);
-        FormData1.append('id_client', id);
-        console.log(FormData1);
-
-        const upload = upload_images_client(FormData1);
-
-        console.log(files);
-    }
-
-    //
-
 
 
     return (
@@ -288,23 +270,8 @@ const ClientsEdit = () => {
                     </Card>
 
                     <Card className="card p-4 ">
-                        <div className="drag_and_drop">
-                            {drag
-                                ? <div key="dsa"  style={{height: '100px'}}
-                                       onDragEnter ={e => dragStartHandler(e)}
-                                    onDragLeave={e => dragLeaveHandler(e)}
-                                       onDragOver={e => dragStartHandler(e)}
-                                       onDrop={e => drop(e)}
-                                >Отпустите файл, что-бы загрузить</div>
-                                : <div key="dsa2" style={{height: '100px'}}
-                                       onDragEnter ={e => dragStartHandler(e)}
-                                    onDragLeave={e => dragLeaveHandler(e)}
-                                       onDragOver={e => dragStartHandler(e)}
-                                    onDrop={e => drop(e)}
-                                >Перетащите файл, что-бы загрузить</div>
-                            }
-                        </div>
 
+                    <DropZona user={user} id={id} allFiles={allFiles} saveUploadImages={saveUploadImages} setSaveUploadImages={setSaveUploadImages}/>
                     </Card>
                 </Col>
             </Row>

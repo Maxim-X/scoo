@@ -58,3 +58,9 @@ export const upload_images_client = async (FormData) => {
     const {data} = await $authHost.post('api/client/upload_images', FormData);
     return data;
 }
+
+
+export const get_all_images = async (id_company, id_client) => {
+    const {data} = await $authHost.get('api/client/get_all_images', {params:{id_company, id_client}});
+    return data;
+}
