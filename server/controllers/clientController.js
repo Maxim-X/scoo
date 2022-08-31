@@ -1,7 +1,8 @@
-const {Client, User, PhoneNumbers, ClientsEmail} = require("../models/models");
+const {Client, User, PhoneNumbers, ClientsEmail, ImagesClient} = require("../models/models");
 const ApiError = require("../error/ApiError");
 const {Op} = require("sequelize");
-
+const uuid = require('uuid');
+const path = require('path');
 class ClientController {
     async create(req, res, next){
         let {name, email, driver_license_number, numberPass, birthday, another_document_name, another_document_number, phonesClient} = req.body.client;
@@ -254,6 +255,34 @@ class ClientController {
         const all_email= await ClientsEmail.findAll({where: {clientId: id_client}});
 
         return res.json(all_email);
+    }
+
+    async uploadImages(req, res, next){
+        try {
+            const {id_client} = req.body;
+            const {images} = req.files;
+            const expanse = images.name.split('.').pop();
+            if (['png', 'jpg', 'jpeg'].indexOf(expanse) < 0){
+                return next(ApiError.badRequest("Photo extension is not supported"));
+            }
+
+            let fileName = uuid.v4() + "."+expanse
+            images.mv(path.resolve(__dirname, '..', 'static', 'images', fileName));
+
+            const add_images = ImagesClient.create({path: fileName, clientId: id_client});
+            return res.json(add_images);
+        }catch (e){
+            return next(ApiError.badRequest("Incorrect data entered"));
+        }
+
+
+        // const path = "../static/images/"+images.name;
+        // try {
+        //     images.mv(path);
+        //     const add_images = ImagesClient.create({path, clientId: id_client});
+        // }catch (e){
+        //
+        // }
     }
 
 }

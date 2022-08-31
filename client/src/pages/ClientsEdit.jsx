@@ -9,7 +9,7 @@ import {
     del_phone_client,
     edit_clients,
     get_client, get_emails_client,
-    get_phone_client
+    get_phone_client, upload_images_client
 } from "../http/companyAPI";
 import RedButton from "../components/UI/RedButton/RedButton";
 import {RiDeleteBack2Fill} from "react-icons/ri";
@@ -41,6 +41,8 @@ const ClientsEdit = () => {
 
     const [successAdd, setSuccessAdd] = useState("");
     const [failAdd, setFailAdd] = useState("");
+
+
 
     const get_client_info = React.useMemo(async() => {
 
@@ -170,6 +172,39 @@ const ClientsEdit = () => {
         }
     }
 
+    //
+    const [drag, setDrag] = useState(false);
+
+    const dragStartHandler = (e) =>{
+        e.preventDefault();
+        console.log("111");
+        setDrag(true);
+    }
+
+    const dragLeaveHandler = (e) =>{
+        e.preventDefault();
+        console.log("222");
+        setDrag(false);
+    }
+
+    function drop(e){
+        e.preventDefault();
+        e.stopPropagation();
+        let files = e.dataTransfer.files;
+        console.log(files);
+
+        const FormData1 = new FormData();
+        FormData1.append('images', files[0]);
+        FormData1.append('id_company', user.user.company.id);
+        FormData1.append('id_client', id);
+        console.log(FormData1);
+
+        const upload = upload_images_client(FormData1);
+
+        console.log(files);
+    }
+
+    //
 
 
 
@@ -233,11 +268,11 @@ const ClientsEdit = () => {
                         </Form.Group>
                         <Card className="card p-3 mb-3 d-flex gap-4 flex-row">
                             {phonesClient.map((phone)=>
-                                <span>{phone} <MiniRedButton onClick={e => del_phone(phone)}><RiDeleteBack2Fill/></MiniRedButton></span>
+                                <span key={phone}>{phone} <MiniRedButton onClick={e => del_phone(phone)}><RiDeleteBack2Fill/></MiniRedButton></span>
                             )}
                         </Card>
                     </Card>
-                    <Card className="card p-4" >
+                    <Card className="card p-4 mb-3" >
                         <Form.Group className="mb-3">
                             <Form.Label>E-mail</Form.Label>
                             <Row>
@@ -247,9 +282,29 @@ const ClientsEdit = () => {
                         </Form.Group>
                         <Card className="card p-3 mb-3 d-flex gap-4 flex-row">
                             {emailClient.map((email)=>
-                                <span>{email} <MiniRedButton onClick={e => del_email(email)}><RiDeleteBack2Fill/></MiniRedButton></span>
+                                <span key={email}>{email} <MiniRedButton onClick={e => del_email(email)}><RiDeleteBack2Fill/></MiniRedButton></span>
                             )}
                         </Card>
+                    </Card>
+
+                    <Card className="card p-4 ">
+                        <div className="drag_and_drop">
+                            {drag
+                                ? <div key="dsa"  style={{height: '100px'}}
+                                       onDragEnter ={e => dragStartHandler(e)}
+                                    onDragLeave={e => dragLeaveHandler(e)}
+                                       onDragOver={e => dragStartHandler(e)}
+                                       onDrop={e => drop(e)}
+                                >Отпустите файл, что-бы загрузить</div>
+                                : <div key="dsa2" style={{height: '100px'}}
+                                       onDragEnter ={e => dragStartHandler(e)}
+                                    onDragLeave={e => dragLeaveHandler(e)}
+                                       onDragOver={e => dragStartHandler(e)}
+                                    onDrop={e => drop(e)}
+                                >Перетащите файл, что-бы загрузить</div>
+                            }
+                        </div>
+
                     </Card>
                 </Col>
             </Row>

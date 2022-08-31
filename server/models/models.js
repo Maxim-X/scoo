@@ -42,7 +42,7 @@ const ClientsEmail  = sequelize.define('clients_email',{
     email: {type: DataTypes.STRING, allowNull: false},
 });
 
-const Images = sequelize.define('images',{
+const ImagesClient = sequelize.define('images_client',{
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     path: {type: DataTypes.STRING, allowNull: false},
 });
@@ -62,8 +62,8 @@ PhoneNumbers.belongsTo(Client);
 Client.hasMany(ClientsEmail);
 ClientsEmail.belongsTo(Client);
 
-Client.hasMany(Images);
-Images.belongsTo(Client);
+Client.hasMany(ImagesClient);
+ImagesClient.belongsTo(Client);
 
 module.exports = {
     Company,
@@ -72,5 +72,5 @@ module.exports = {
     Client,
     PhoneNumbers,
     ClientsEmail,
-    Images
+    ImagesClient
 };

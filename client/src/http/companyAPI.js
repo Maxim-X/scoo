@@ -53,3 +53,8 @@ export const get_emails_client = async (id_company, id_client) => {
     const {data} = await $authHost.get('api/client/all_emails', {params:{id_company, id_client}});
     return data;
 }
+
+export const upload_images_client = async (FormData) => {
+    const {data} = await $authHost.post('api/client/upload_images', FormData);
+    return data;
+}
