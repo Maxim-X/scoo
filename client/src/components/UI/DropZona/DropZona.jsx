@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {get_all_images, upload_images_client} from "../../../http/companyAPI";
+import {del_images, get_all_images, upload_images_client} from "../../../http/companyAPI";
 import {Col, Row} from "react-bootstrap";
 import classes from "./DropZona.module.css";
 import {AiOutlineCloudUpload} from "react-icons/ai";
@@ -46,6 +46,19 @@ const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadIma
 
 
     }
+
+    const del_img = async (images_name) =>{
+        if (id){
+            try {
+                const del = await del_images(user.user.company.id, images_name);
+                console.log(del);
+            }catch (e){
+                console.log(e.response.data.message);
+            }
+        }else{
+
+        }
+    }
     return (
         <Row className={classes.dragAndDrop}>
             <Col md="4">
@@ -69,7 +82,7 @@ const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadIma
                     {allFiles && allFiles.map((file)=>
                         <div className={classes.fileBlock}>
                             <img onClick={e => window.open(process.env.REACT_APP_API_URL +"/"+ file.path)} src={process.env.REACT_APP_API_URL +"/"+ file.path} />
-                            <div className={classes.butDelete}>Delete</div>
+                            <div onClick={e => del_img(file.path)} className={classes.butDelete}>Delete</div>
                         </div>
                     )}
                     {saveUploadImages && saveUploadImages.map((file)=>

@@ -18,6 +18,7 @@ router.post('/del_email', authMiddleware, checkAccessCompanyMiddleware, clientCo
 router.get('/all_emails', authMiddleware, checkAccessCompanyMiddleware, clientController.getAllEmail);
 
 router.post('/upload_images', authMiddleware,checkAccessCompanyMiddleware, clientController.uploadImages);
+router.post('/delete_images', authMiddleware,checkAccessCompanyMiddleware, clientController.deleteImages);
 router.get('/get_all_images',checkAccessCompanyMiddleware, authMiddleware, clientController.getAllImages);
 
 

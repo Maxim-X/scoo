@@ -3,6 +3,7 @@ const ApiError = require("../error/ApiError");
 const {Op} = require("sequelize");
 const uuid = require('uuid');
 const path = require('path');
+const fs = require('fs').promises;
 class ClientController {
     async create(req, res, next){
         let {name, email, driver_license_number, numberPass, birthday, another_document_name, another_document_number, phonesClient, emailClient} = req.body.client;
@@ -280,6 +281,28 @@ class ClientController {
         }catch (e){
             return next(ApiError.badRequest("Incorrect data entered"));
         }
+    }
+    async deleteImages(req, res, next){
+        const {id_company, images_name} = req.body;
+        if (!images_name){
+            return next(ApiError.badRequest("Incorrect data entered"));
+        }
+        let checkImage = await ImagesClient.findOne({where:{path: images_name}});
+        console.log(checkImage);
+        if (!checkImage){
+            return next(ApiError.badRequest("Incorrect data entered"));
+        }
+        let checkClient = await Client.findOne({where:{[Op.and]:[{id: checkImage.clientId}, {companyId:id_company}]}});
+        console.log(checkClient);
+        if (!checkClient){
+            return next(ApiError.badRequest("Incorrect data entered"));
+        }
+
+        let file = path.resolve(__dirname, '..', 'static', 'images', images_name);
+        await fs.unlink(file);
+        const del_images = await ImagesClient.destroy({where:{id: checkImage.id}});
+        return res.json(del_images);
+        // return res.json("dd");
     }
 
     async getAllImages(req, res, next){
