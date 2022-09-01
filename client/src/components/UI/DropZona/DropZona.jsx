@@ -7,11 +7,12 @@ import {AiOutlineCloudUpload} from "react-icons/ai";
 const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadImages}) => {
     const [uploadImage, setUploadImage] = useState([]);
     const [drag, setDrag] = useState(false);
+    const [uploadServerImage, setUploadServerImage] = useState([]);
 
 
     useEffect(()=>{
-        // get_all_images(user.user.company.id, id).then(images => setAllFiles(images));
-    }, []);
+        setUploadServerImage(allFiles);
+    }, [allFiles]);
 
     const dragStartHandler = (e) =>{
         e.preventDefault();
@@ -51,11 +52,12 @@ const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadIma
         if (id){
             try {
                 const del = await del_images(user.user.company.id, images_name);
-                console.log(del);
+                setUploadServerImage([...uploadServerImage.filter(function(f) { console.log(f[0]); return f[0]['name'] !== images_name  })]);
             }catch (e){
                 console.log(e.response.data.message);
             }
         }else{
+            setUploadImage([...saveUploadImages.filter(function(f) { console.log(f[0]); return f[0]['name'] !== images_name  })]);
 
         }
     }
@@ -79,7 +81,7 @@ const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadIma
             </Col>
             <Col>
                 <div className={classes.allFilesZona}>
-                    {allFiles && allFiles.map((file)=>
+                    {uploadServerImage && uploadServerImage.map((file)=>
                         <div className={classes.fileBlock}>
                             <img onClick={e => window.open(process.env.REACT_APP_API_URL +"/"+ file.path)} src={process.env.REACT_APP_API_URL +"/"+ file.path} />
                             <div onClick={e => del_img(file.path)} className={classes.butDelete}>Delete</div>
@@ -88,7 +90,7 @@ const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadIma
                     {saveUploadImages && saveUploadImages.map((file)=>
                         <div className={classes.fileBlock}>
                                 <div>{file[0]['name']}</div>
-                                <div className={classes.butDelete}>Delete</div>
+                                <div onClick={e => del_img(file[0]['name'])} className={classes.butDelete}>Delete</div>
                         </div>
                     )}
                 </div>
