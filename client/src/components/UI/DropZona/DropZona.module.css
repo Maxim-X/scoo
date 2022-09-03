@@ -9,6 +9,7 @@
     border: 2px solid #4c70f0 !important;
     border-radius: 6px;
     color: #2b4bbd;
+    max-height: 150px;
 }
 .dragAndDropZonaActive{
     display: grid;
@@ -18,6 +19,7 @@
     border: 2px dashed #4c70f0 !important;
     border-radius: 6px;
     color: #2b4bbd;
+    max-height: 150px;
 }
 .dragAndDropZona svg {
     margin: auto;
@@ -28,9 +30,10 @@
     font-size: 52px;
 }
 .allFilesZona {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-start;
+    display: grid;
+    gap: 15px;
+    grid-template-columns: repeat(3, 1fr);
+    min-height: 100%;
 }
 
 .allFilesZona img {
@@ -40,7 +43,7 @@
 }
 
 .fileBlock {
-    width: 25%;
+    width: 100%;
     position: relative;
 }
 
@@ -64,4 +67,8 @@
 }
 .fileBlock:hover .butDelete{
     opacity: 1;
+}
+.dragAndDropZona input[type='file'], .dragAndDropZonaActive input[type='file'] {
+    width: 130px;
+    margin: auto;
 }

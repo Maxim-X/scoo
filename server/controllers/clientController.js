@@ -6,7 +6,7 @@ const path = require('path');
 const fs = require('fs').promises;
 class ClientController {
     async create(req, res, next){
-        let {name, email, driver_license_number, numberPass, birthday, another_document_name, another_document_number, phonesClient, emailClient} = req.body.client;
+        let {name, email, driver_license_number, numberPass, birthday, another_document_name, another_document_number, phonesClient, emailClient, address} = req.body.client;
         let {id_company} = req.body;
 
         name = name.trim();
@@ -15,6 +15,7 @@ class ClientController {
         numberPass = numberPass.trim();
         birthday = birthday.trim();
         another_document_name = another_document_name.trim();
+        address = address.trim();
         another_document_number = another_document_number.trim();
         if (!name || name.length == 0){
             return next(ApiError.badRequest("First and last name not specified"));
@@ -44,6 +45,9 @@ class ClientController {
         if (!another_document_number || another_document_number.length == 0){
             another_document_number = null;
         }
+        if (!address || address.length == 0){
+            another_document_number = null;
+        }
         const add_client = await Client.create(
             {
                 name,
@@ -53,7 +57,8 @@ class ClientController {
                 birthday,
                 companyId: id_company,
                 another_document_name: another_document_name,
-                another_document_number: another_document_number
+                another_document_number: another_document_number,
+                address: address
             });
 
         phonesClient.map(async (number)=>{
@@ -73,7 +78,7 @@ class ClientController {
     }
 
     async edit(req, res, next){
-        let {name, email, driver_license_number, numberPass, birthday, another_document_name, another_document_number} = req.body.client;
+        let {name, email, driver_license_number, numberPass, birthday, another_document_name, another_document_number, address} = req.body.client;
         let {id_company, id_client} = req.body;
 
         if(name != null) name = name.trim();
@@ -83,6 +88,7 @@ class ClientController {
         if(birthday != null) birthday = birthday.trim();
         if(another_document_name != null) another_document_name = another_document_name.trim();
         if(another_document_number != null) another_document_number = another_document_number.trim();
+        if(address != null) address = address.trim();
 
         if (!name || name.length == 0){
             return next(ApiError.badRequest("First and last name not specified"));
@@ -115,6 +121,9 @@ class ClientController {
         if (!another_document_number || another_document_number.length == 0){
             birthday = null;
         }
+        if (!address || address.length == 0){
+            address = null;
+        }
 
         client.set({
             name: name,
@@ -124,6 +133,7 @@ class ClientController {
             birthday: birthday,
             another_document_name: another_document_name,
             another_document_number: another_document_number,
+            address: address
         });
 
         const save = await client.save();

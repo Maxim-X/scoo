@@ -8,7 +8,7 @@ import {useNavigate} from "react-router-dom";
 import {get_phone_client} from "../http/companyAPI";
 import {Context} from "../index";
 
-const TableMain = ({data_head, data_body, setClientEdit, setModalShow, deleteClient, data_search}) => {
+const TableMain = ({data_head, data_body, setClientEdit, setModalShow, delete_item, data_search, url_edit}) => {
     const [selectedSort, setSelectedSort] = useState("");
     const [posts, setPosts] = useState([]);
     const [reverse, setReverse] = useState(false);
@@ -99,8 +99,8 @@ const TableMain = ({data_head, data_body, setClientEdit, setModalShow, deleteCli
                         <td key={data[d['el']]}>{data[d['el']]}</td>
                     )}
                 <td key={"td-func-"+data['id']} width="min-content">
-                    <MainButton key={"func-"+data['id']} style={{marginRight:"10px"}} onClick={e=>{navigate(`/clients_edit/${data['id']}`);}}><AiFillEdit size="1.2rem" style={{marginRight:"0px"}}/></MainButton>
-                    <RedButton key={"func-del-"+data['id']} onClick={e=>{deleteClient(data['id'])}}><AiFillDelete size="1.2rem" style={{marginRight:"0px"}}/></RedButton>
+                    <MainButton key={"func-"+data['id']} style={{marginRight:"10px"}} onClick={e=>{navigate(`/${url_edit}/${data['id']}`);}}><AiFillEdit size="1.2rem" style={{marginRight:"0px"}}/></MainButton>
+                    <RedButton key={"func-del-"+data['id']} onClick={e=>{delete_item(data['id'])}}><AiFillDelete size="1.2rem" style={{marginRight:"0px"}}/></RedButton>
                 </td>
                 </tr>
             )}

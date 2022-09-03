@@ -52,6 +52,9 @@ body {
 .mainContainer{
     padding: 15px 25px;
 }
+.blockScrollTable{
+    overflow-x: auto;
+}
 
 @font-face {
     font-family: 'Overpass';

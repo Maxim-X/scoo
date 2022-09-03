@@ -4,7 +4,7 @@ import {Col, Row} from "react-bootstrap";
 import classes from "./DropZona.module.css";
 import {AiOutlineCloudUpload} from "react-icons/ai";
 
-const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadImages}) => {
+const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadImages, update_files_info}) => {
     const [uploadImage, setUploadImage] = useState([]);
     const [drag, setDrag] = useState(false);
     const [uploadServerImage, setUploadServerImage] = useState([]);
@@ -27,7 +27,14 @@ const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadIma
     function drop(e){
         e.preventDefault();
         e.stopPropagation();
-        let files = e.dataTransfer.files;
+        setDrag(false);
+        let files;
+
+        if (e.dataTransfer != undefined){
+            files = e.dataTransfer.files;
+        }else{
+            files = e.target.files;
+        }
         const FormData1 = new FormData();
         FormData1.append('images', files[0]);
         FormData1.append('id_company', user.user.company.id);
@@ -35,15 +42,14 @@ const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadIma
 
         if (id){
             const upload = upload_images_client(FormData1);
+            if (upload){
+                update_files_info();
+            }
         }else{
             setSaveUploadImages([...saveUploadImages, files]);
         }
+        update_files_info();
 
-        if (saveUploadImages.length != 0){
-            for (let i = 0; i < saveUploadImages.length; i++){
-                console.log(saveUploadImages[i][0]);
-            }
-        }
 
 
     }
@@ -52,14 +58,13 @@ const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadIma
         if (id){
             try {
                 const del = await del_images(user.user.company.id, images_name);
-                setUploadServerImage([...uploadServerImage.filter(function(f) { console.log(f[0]); return f[0]['name'] !== images_name  })]);
             }catch (e){
                 console.log(e.response.data.message);
             }
         }else{
-            setUploadImage([...saveUploadImages.filter(function(f) { console.log(f[0]); return f[0]['name'] !== images_name  })]);
-
+            setSaveUploadImages([...saveUploadImages.filter(function(f) { console.log(f[0]['name'] !== images_name); return f[0]['name'] !== images_name  })]);
         }
+        update_files_info();
     }
     return (
         <Row className={classes.dragAndDrop}>
@@ -70,13 +75,13 @@ const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadIma
                            onDragLeave={e => dragLeaveHandler(e)}
                            onDragOver={e => dragStartHandler(e)}
                            onDrop={e => drop(e)}
-                    ><AiOutlineCloudUpload/>Отпустите файл, что-бы загрузить</div>
+                    ><AiOutlineCloudUpload/>Отпустите файл, что-бы загрузить <div><input type="file" onChange={e => {drop(e)}} accept="image/jpeg,image/png"/></div></div>
                     : <div className={classes.dragAndDropZona} key="drag_and_drop_zona"
                            onDragEnter ={e => dragStartHandler(e)}
                            onDragLeave={e => dragLeaveHandler(e)}
                            onDragOver={e => dragStartHandler(e)}
                            onDrop={e => drop(e)}
-                    ><AiOutlineCloudUpload/>Перетащите файл, что-бы загрузить</div>
+                    ><AiOutlineCloudUpload/>Перетащите файл, что-бы загрузить <div><input type="file" onChange={e => {drop(e)}} accept="image/jpeg,image/png"/></div></div>
                 }
             </Col>
             <Col>

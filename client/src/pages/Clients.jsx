@@ -72,7 +72,9 @@ const Clients = () => {
                             </Col>
                         </Row>
                         <br/>
-                        <TableMain data_body={clients} data_search={search} data_head={head.filter(function(f) { return f['use'] })} setModalShow={setModalShow} setClientEdit={setClientEdit} deleteClient={deleteClient}/>
+                        <div className="blockScrollTable">
+                            <TableMain data_body={clients} data_search={search} data_head={head.filter(function(f) { return f['use'] })} setModalShow={setModalShow} setClientEdit={setClientEdit} url_edit="clients_edit" delete_item={deleteClient}/>
+                        </div>
                     </Card>
                 </Col>
             </Row>

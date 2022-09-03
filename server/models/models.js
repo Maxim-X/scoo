@@ -30,6 +30,7 @@ const Client = sequelize.define( 'client', {
     birthday: {type: DataTypes.DATEONLY, allowNull: true},
     another_document_name: {type: DataTypes.STRING, allowNull: true},
     another_document_number: {type: DataTypes.STRING, allowNull: true},
+    address: {type: DataTypes.STRING, allowNull: true}
     //id_company :{type: DataTypes.INTEGER, allowNull: false},
 });
 
@@ -43,6 +44,33 @@ const ClientsEmail  = sequelize.define('clients_email',{
 });
 
 const ImagesClient = sequelize.define('images_client',{
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    path: {type: DataTypes.STRING, allowNull: false},
+});
+
+const Stock = sequelize.define('stock', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, allowNull: false},
+    vendor_code: {type: DataTypes.STRING, allowNull: false},
+    inventory_number: {type: DataTypes.STRING, allowNull: false},
+})
+
+const RentalPoints = sequelize.define('rental_points', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, allowNull: false}
+})
+
+const RentalCategories = sequelize.define('rental_categories', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, allowNull: false}
+})
+
+const RentalStatuses = sequelize.define('rental_statuses', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, allowNull: false}
+})
+
+const ImagesStock = sequelize.define('images_stock',{
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     path: {type: DataTypes.STRING, allowNull: false},
 });
@@ -65,6 +93,24 @@ ClientsEmail.belongsTo(Client);
 Client.hasMany(ImagesClient);
 ImagesClient.belongsTo(Client);
 
+Company.hasMany(Stock);
+Stock.belongsTo(Company);
+
+Stock.hasMany(ImagesStock);
+ImagesStock.belongsTo(Stock);
+
+Company.hasMany(RentalPoints);
+RentalPoints.belongsTo(Company);
+
+RentalPoints.hasOne(Stock);
+Stock.belongsTo(RentalPoints);
+
+RentalCategories.hasOne(Stock);
+Stock.belongsTo(RentalCategories);
+
+RentalStatuses.hasOne(Stock);
+Stock.belongsTo(RentalStatuses);
+
 module.exports = {
     Company,
     User,
@@ -72,5 +118,10 @@ module.exports = {
     Client,
     PhoneNumbers,
     ClientsEmail,
-    ImagesClient
+    ImagesClient,
+    Stock,
+    RentalPoints,
+    RentalCategories,
+    RentalStatuses,
+    ImagesStock
 };

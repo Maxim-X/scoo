@@ -16,10 +16,9 @@ const Header = () => {
     const navigate = useNavigate();
 
     const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
-    const isTabletOrMobile = useMediaQuery({ query: '(max-width: 768px)' })
+    const isTabletOrMobile = useMediaQuery({ query: '(max-width: 926px)' })
     const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
     const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
-    console.log(isTabletOrMobile);
     const logOut = () => {
         user.setUser({})
         user.setIsAuth(false);
@@ -61,7 +60,7 @@ const Header = () => {
                             <li className="nav-item left-menu-li">
                                 <Link className="nav-link active" to="/stock">
                                     <span><AiFillExperiment size="1.4rem" /></span>
-                                    <span>Your motorcycles</span>
+                                    <span>Stock</span>
                                 </Link>
                             </li>
                             <li className="nav-item left-menu-li">

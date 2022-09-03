@@ -30,6 +30,7 @@ const ClientsEdit = () => {
     const [driverLicenseNumber, setDriverLicenseNumber] = useState("");
     const [numberPass, setNumberPass] = useState("");
     const [birthday, setBirthday] = useState("");
+    const [address, setAddress] = useState("");
 
     const [phonesClient, setPhonesClient] = useState([]);
     const [emailClient, setEmailClient] = useState([]);
@@ -45,8 +46,13 @@ const ClientsEdit = () => {
     const [allFiles, setAllFiles] = useState([]);
 
     useEffect(() => {
-        get_all_images(user.user.company.id, id).then(images => setAllFiles(images));
+        update_files_info();
     }, []);
+
+    const  update_files_info = () =>{
+        console.log("update");
+        get_all_images(user.user.company.id, id).then(images => setAllFiles(images));
+    }
 
     const get_client_info = React.useMemo(async() => {
 
@@ -63,6 +69,7 @@ const ClientsEdit = () => {
             setAnotherDocumentNumber("");
             setPhonesClient([]);
             setEmailClient([]);
+            setAddress("");
         }else {
             try {
                 if (!parseInt(id)){
@@ -75,6 +82,7 @@ const ClientsEdit = () => {
                 setBirthday(client.birthday);
                 setAnotherDocumentName(client.another_document_name);
                 setAnotherDocumentNumber(client.another_document_number);
+                setAddress(client.address);
 
                 let phoneNumber = await get_phone_client(user.user.company.id, id);
                 let allPhone = [];
@@ -110,6 +118,7 @@ const ClientsEdit = () => {
                 another_document_number: anotherDocumentNumber,
                 phonesClient: phonesClient,
                 emailClient: emailClient,
+                address: address,
             };
             let data;
             if (id){
@@ -234,10 +243,16 @@ const ClientsEdit = () => {
                                     </Row>
                                 </Form.Group></Col>
                             </Row>
-                            <Form.Group className="mb-3">
-                                <Form.Label>Birthday</Form.Label>
-                                <Form.Control value={birthday} onChange={e => setBirthday(e.target.value)} type="date" placeholder="Enter date of birth" />
-                            </Form.Group>
+                            <Row>
+                                <Col><Form.Group className="mb-3">
+                                    <Form.Label>Birthday</Form.Label>
+                                    <Form.Control value={birthday} onChange={e => setBirthday(e.target.value)} type="date" placeholder="Enter date of birth" />
+                                </Form.Group></Col>
+                                <Col><Form.Group className="mb-3">
+                                    <Form.Label>Address</Form.Label>
+                                    <Form.Control value={address} onChange={e => setAddress(e.target.value)} type="address" placeholder="Enter address" />
+                                </Form.Group></Col>
+                            </Row>
                         </Form>
                     </Card>
                     <Card className="card p-4 mb-3" >
@@ -271,7 +286,7 @@ const ClientsEdit = () => {
 
                     <Card className="card p-4 ">
 
-                    <DropZona user={user} id={id} allFiles={allFiles} saveUploadImages={saveUploadImages} setSaveUploadImages={setSaveUploadImages}/>
+                    <DropZona user={user} id={id} update_files_info={update_files_info} allFiles={allFiles} saveUploadImages={saveUploadImages} setSaveUploadImages={setSaveUploadImages}/>
                     </Card>
                 </Col>
             </Row>
