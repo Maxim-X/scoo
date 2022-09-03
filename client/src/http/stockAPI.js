@@ -14,6 +14,10 @@ export const add_inventory = async (inventory, id_company) => {
     const {data} = await $authHost.post('api/stock/add', {inventory, id_company});
     return data;
 }
+export const edit_inventory = async (inventory, id_company, id_inventory) => {
+    const {data} = await $authHost.post('api/stock/edit', {inventory, id_company, id_inventory});
+    return data;
+}
 
 export const upload_images_inventory = async (FormData) => {
     const {data} = await $authHost.post('api/stock/upload_images', FormData);

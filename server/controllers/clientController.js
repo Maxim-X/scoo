@@ -9,14 +9,14 @@ class ClientController {
         let {name, email, driver_license_number, numberPass, birthday, another_document_name, another_document_number, phonesClient, emailClient, address} = req.body.client;
         let {id_company} = req.body;
 
-        name = name.trim();
-        email = email.trim();
-        driver_license_number = driver_license_number.trim();
-        numberPass = numberPass.trim();
-        birthday = birthday.trim();
-        another_document_name = another_document_name.trim();
-        address = address.trim();
-        another_document_number = another_document_number.trim();
+        if(name != null)  name = name.trim();
+        if(email != null)  email = email.trim();
+        if(driver_license_number != null)  driver_license_number = driver_license_number.trim();
+        if(numberPass != null)  numberPass = numberPass.trim();
+        if(birthday != null)  birthday = birthday.trim();
+        if(another_document_name != null)  another_document_name = another_document_name.trim();
+        if(address != null)  address = address.trim();
+        if(another_document_number != null)  another_document_number = another_document_number.trim();
         if (!name || name.length == 0){
             return next(ApiError.badRequest("First and last name not specified"));
         }

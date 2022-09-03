@@ -7,7 +7,8 @@ import ModalClient from "../components/UI/ModalClient/ModalClient";
 import TableMain from "../components/TableMain";
 import {Context} from "../index";
 import {useNavigate} from "react-router-dom";
-import {get_stock, add_inventory} from "../http/stockAPI";
+import {get_stock, add_inventory, get_rental_points, get_rental_category, get_rental_status} from "../http/stockAPI";
+import {forEach} from "react-bootstrap/ElementChildren";
 
 const Stock = () => {
     const {user} = useContext(Context);
@@ -16,14 +17,37 @@ const Stock = () => {
     const [search, setSearch] = useState("");
     const navigate = useNavigate();
 
+    const [listPoints, setListPoints] = useState([]);
+    const [listCategory, setListCategory] = useState([]);
+    const [listStatus, setListStatus] = useState([]);
+
     useEffect(()=>{
         reloading();
     },[]);
 
+    useEffect(() => {
+        let replace_value = [];
+
+        for (let index = 0; index < stock.length; ++index) {
+            let dd = stock[index];
+            dd.rentalPointId = -1;
+            replace_value.push(dd);
+        }
+        console.log(replace_value);
+        setStock(replace_value);
+
+
+    }, [listStatus, listPoints, listCategory])
+
     const reloading = () => {
-        get_stock(user.user.company.id).then(stock => setStock(stock));
-        console.log(stock);
+        let stock_get = get_stock(user.user.company.id).then(stock => {setStock(stock); replacing_value()})
     }
+    const replacing_value = () =>{
+        let points_get = get_rental_points(user.user.company.id).then(points => setListPoints(points))
+        let category_get = get_rental_category(user.user.company.id).then(category => setListCategory(category));
+        let status_get = get_rental_status(user.user.company.id).then(status => setListStatus(status));
+    }
+    // const replacingValues()
 
     const changeElHead = (e, el) =>{
         let elem = head.filter(function(f) { if(f['el'] == el){f['use'] = e.target.checked} return true});

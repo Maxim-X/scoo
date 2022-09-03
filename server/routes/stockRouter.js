@@ -5,9 +5,10 @@ const authMiddleware = require("../middleware/authMiddleware");
 const checkAccessCompanyMiddleware = require("../middleware/checkAccessCompanyMiddleware");
 const clientController = require("../controllers/clientController");
 
-router.post('/add',stockController.create);
-router.get('/all',stockController.getAll);
-router.get('/one',stockController.getOne);
+router.post('/add', stockController.create);
+router.post('/edit', authMiddleware,checkAccessCompanyMiddleware, stockController.edit);
+router.get('/all', authMiddleware,checkAccessCompanyMiddleware, stockController.getAll);
+router.get('/one', authMiddleware,checkAccessCompanyMiddleware, stockController.getOne);
 
 router.post('/upload_images', authMiddleware,checkAccessCompanyMiddleware, stockController.uploadImages);
 router.post('/delete_images', authMiddleware,checkAccessCompanyMiddleware, stockController.deleteImages);

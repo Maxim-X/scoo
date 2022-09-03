@@ -71,6 +71,73 @@ class StockController{
 
         return res.json({status: true, message:"Client added", inventory_id: add_inventory.id});
     }
+
+    async edit(req, res, next){
+        let {id, name, vendor_code, inventory_number, rentalPointId, rentalCategoryId, rentalStatusId} = req.body.inventory;
+        let {id_company, id_inventory} = req.body;
+
+        if(id != null) id = id.trim();
+        if(name != null) name = name.trim();
+        if(vendor_code != null) vendor_code = vendor_code.trim();
+        if(inventory_number != null) inventory_number = inventory_number.trim();
+        if (!name || name.length == 0){
+            return next(ApiError.badRequest("Name not specified"));
+        }
+        const stock = await Stock.findOne({where:{[Op.and]:[{id: id_inventory},{companyId: id_company}]}})
+        if (!stock){
+            return next(ApiError.badRequest("Inventory already added"));
+        }
+        if (!id_company || id_company <= 0){
+            return next(ApiError.badRequest("Company not specified"));
+        }
+        if (!vendor_code || vendor_code.length == 0){
+            return next(ApiError.badRequest("Vendor code not specified"));
+        }
+        if (!inventory_number || inventory_number.length == 0){
+            return next(ApiError.badRequest("Inventory number not specified"));
+        }
+        if (!rentalPointId || rentalPointId <= 0){
+            return next(ApiError.badRequest("Rental point not specified"));
+        }
+        const checkRentalPointId = RentalPoints.findOne({where:{[Op.and]:[{companyId: id_company}, {id: rentalPointId}]}})
+        if (!checkRentalPointId){
+            return next(ApiError.badRequest("Rental point not specified"));
+        }
+
+        if (!rentalCategoryId || rentalCategoryId <= 0){
+            return next(ApiError.badRequest("Rental category not specified"));
+        }
+        const checkRentalCategoryId = RentalCategories.findOne({where:{id: rentalCategoryId}});
+        if (!checkRentalCategoryId){
+            return next(ApiError.badRequest("Rental category not specified"));
+        }
+
+        if (!rentalStatusId || rentalStatusId <= 0){
+            return next(ApiError.badRequest("Rental category not specified"));
+        }
+        const checkRentalStatusId = RentalStatuses.findOne({});
+        if (!checkRentalStatusId){
+            return next(ApiError.badRequest("Rental statuses not specified"));
+        }
+        console.log(inventory_number)
+        console.log(id_company)
+        console.log(rentalPointId)
+        console.log(rentalCategoryId)
+        console.log(rentalStatusId)
+
+        stock.set({
+            name,
+            vendor_code,
+            inventory_number,
+            companyId: id_company,
+            rentalPointId,
+            rentalCategoryId,
+            rentalStatusId
+        });
+
+        const save = await stock.save();
+        return res.json({status: true, message:"Stock edit"});
+    }
     async getAll(req, res, next){
         const {id_company} = req.query;
         if (!id_company){
@@ -92,6 +159,7 @@ class StockController{
 
         return res.json(inventory);
     }
+
 
     async uploadImages(req, res, next){
         try {

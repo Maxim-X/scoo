@@ -6,7 +6,7 @@ import {
     add_inventory,
     get_all_images_inventory,
     upload_images_inventory,
-    get_inventory, get_rental_points, get_rental_category, get_rental_status
+    get_inventory, get_rental_points, get_rental_category, get_rental_status, edit_inventory
 } from "../http/stockAPI";
 import {Alert, Card, Col, Container, Form, Row} from "react-bootstrap";
 import RedButton from "../components/UI/RedButton/RedButton";
@@ -85,7 +85,7 @@ const StockEdit = () => {
         setFailAdd("");
         try {
             const inventory ={
-                name: name,
+                name,
                 vendor_code: vendorCode,
                 inventory_number: inventoryNumber,
                 rentalPointId: rentalPointId,
@@ -94,19 +94,19 @@ const StockEdit = () => {
             };
             let data;
             if (id){
-                //data = await edit_clients(inventory, user.user.company.id, id);
+                data = await edit_inventory(inventory, user.user.company.id, id);
             }else {
                 data = await add_inventory(inventory, user.user.company.id);
                 console.log(data)
-                if (saveUploadImages.length != 0){
-                    for (let i = 0; i < saveUploadImages.length; i++){
-                        const FormData1 = new FormData();
-                        FormData1.append('images', saveUploadImages[i][0]);
-                        FormData1.append('id_company', user.user.company.id);
-                        FormData1.append('id_client', data.client_id);
-                        const upload = await upload_images_inventory(FormData1);
-                    }
-                }
+                // if (saveUploadImages.length != 0){
+                //     for (let i = 0; i < saveUploadImages.length; i++){
+                //         const FormData1 = new FormData();
+                //         FormData1.append('images', saveUploadImages[i][0]);
+                //         FormData1.append('id_company', user.user.company.id);
+                //         FormData1.append('id_client', data.client_id);
+                //         const upload = await upload_images_inventory(FormData1);
+                //     }
+                // }
 
             }
 
