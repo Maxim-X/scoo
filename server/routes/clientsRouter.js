@@ -19,7 +19,7 @@ router.get('/all_emails', authMiddleware, checkAccessCompanyMiddleware, clientCo
 
 router.post('/upload_images', authMiddleware,checkAccessCompanyMiddleware, clientController.uploadImages);
 router.post('/delete_images', authMiddleware,checkAccessCompanyMiddleware, clientController.deleteImages);
-router.get('/get_all_images',checkAccessCompanyMiddleware, authMiddleware, clientController.getAllImages);
+router.get('/get_all_images', authMiddleware, checkAccessCompanyMiddleware, clientController.getAllImages);
 
 
 module.exports = router;

@@ -1,15 +1,13 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Card, Col, Container, Form, Row} from "react-bootstrap";
 import SearchInput from "../components/UI/SearchInput/SearchInput";
 import MainButton from "../components/UI/MainButton/MainButton";
 import {IoIosAdd} from "react-icons/io";
 import TableMain from "../components/TableMain";
-import {Context} from "../index";
 import {useNavigate} from "react-router-dom";
 import {get_stock, del_inventory, get_rental_points, get_rental_category, get_rental_status} from "../http/stockAPI";
 
 const Stock = () => {
-    const {user} = useContext(Context);
     const [stock, setStock] = useState([]);
     const [head, setHead] = useState([{name: "Name", el: "name", use: true, def: true},{name: "Vendor code", el: "vendor_code", use: true, def: true}, {name: "Inventory number", el: "inventory_number", use: true, def: true}, {name: "Rental point", el: "rentalPointId", use: true, def: false}, {name: "Category", el: "rentalCategoryId", use: true, def: false}, {name: "Status", el: "rentalStatusId", use: true, def: false}]);
     const [itemSearch, setItemSearch] = useState(['name', 'vendor_code', 'inventory_number']);
@@ -43,12 +41,12 @@ const Stock = () => {
     }, [listStatus, listPoints, listCategory])
 
     const reloading = () => {
-       get_stock(user.user.company.id).then(stock => {setStock(stock); replacing_value()})
+       get_stock().then(stock => {setStock(stock); replacing_value()})
     }
     const replacing_value = () =>{
-        get_rental_points(user.user.company.id).then(points => setListPoints(points))
-        get_rental_category(user.user.company.id).then(category => setListCategory(category));
-        get_rental_status(user.user.company.id).then(status => setListStatus(status));
+        get_rental_points().then(points => setListPoints(points))
+        get_rental_category().then(category => setListCategory(category));
+        get_rental_status().then(status => setListStatus(status));
     }
 
     const changeElHead = (e, el) =>{
@@ -58,7 +56,7 @@ const Stock = () => {
 
     const deleteClient = async(id_stock) =>{
         if (window.confirm('Are you sure you want to delete inventory?')){
-            let dInvent = await del_inventory(user.user.company.id, id_stock);
+            let dInvent = await del_inventory(id_stock);
             reloading();
         }
     }

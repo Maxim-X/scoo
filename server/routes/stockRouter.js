@@ -5,7 +5,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 const checkAccessCompanyMiddleware = require("../middleware/checkAccessCompanyMiddleware");
 const clientController = require("../controllers/clientController");
 
-router.post('/add', stockController.create);
+router.post('/add', authMiddleware,checkAccessCompanyMiddleware, stockController.create);
 router.post('/edit', authMiddleware,checkAccessCompanyMiddleware, stockController.edit);
 router.get('/all', authMiddleware,checkAccessCompanyMiddleware, stockController.getAll);
 router.get('/one', authMiddleware,checkAccessCompanyMiddleware, stockController.getOne);

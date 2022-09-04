@@ -1,16 +1,14 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Button, Card, Col, Container, Form, Row, Table} from "react-bootstrap";
+import React, {useEffect, useState} from 'react';
+import {Card, Col, Container, Form, Row} from "react-bootstrap";
 import SearchInput from "../components/UI/SearchInput/SearchInput";
 import {all_clients, del_clients, get_phone_client, upload_images_client} from "../http/companyAPI";
 import TableMain from "../components/TableMain";
 import {IoIosAdd} from "react-icons/io";
 import MainButton from "../components/UI/MainButton/MainButton";
 import ModalClient from "../components/UI/ModalClient/ModalClient";
-import {Context} from "../index";
 import {useNavigate} from "react-router-dom";
 
 const Clients = () => {
-    const {user} = useContext(Context);
     const [clients, setClients] = useState([]);
     const [head, setHead] = useState([{name: "Name", el: "name", use: true, def: true},{name: "Email", el: "email", use: true, def: true}, {name: "Phone", el: "phone", use: true, def: true}, {name: "Birthday", el: "birthday", use: true, def: false}, {name: "Driver license", el: "driver_license_number", use: false, def: false},{name: "Address", el: "address", use: false, def: false}, {name: "Passport number", el: "passport_number", use: false, def: false}]);
     const [itemSearch, setItemSearch] = useState(['name', 'email', 'phone']);
@@ -22,9 +20,8 @@ const Clients = () => {
     useEffect(()=>{
         reloading();
     },[]);
-    console.log(clients);
     const reloading = () => {
-        all_clients(user.user.company.id).then(clients => setClients(clients));
+        all_clients().then(clients => setClients(clients));
     }
 
     const changeElHead = (e, el) =>{
@@ -32,13 +29,9 @@ const Clients = () => {
         setHead(elem);
     }
 
-    const clickAddClient = () =>{
-        setClientEdit(0);
-        setModalShow(true);
-    }
      const deleteClient = async(id_client) =>{
         if (window.confirm('Are you sure you want to delete the user?')){
-            let dClient = await del_clients(user.user.company.id, id_client);
+            let dClient = await del_clients(id_client);
             reloading();
         }
     }

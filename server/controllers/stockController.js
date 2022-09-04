@@ -6,11 +6,13 @@ const {Op} = require("sequelize");
 const uuid = require("uuid");
 const path = require("path");
 const {promises: fs} = require("fs");
+const checkAccessCompanyMiddleware = require("../middleware/checkAccessCompanyMiddleware");
+
 
 class StockController{
     async create(req, res, next){
         let {name, vendor_code, inventory_number, rentalPointId, rentalCategoryId, rentalStatusId, note, inspectionDate, oilChangeDate} = req.body.inventory;
-        let {id_company} = req.body;
+        const id_company = req.user.company.id;
 
         name = name.trim();
         vendor_code = vendor_code.trim();
@@ -87,7 +89,8 @@ class StockController{
 
     async edit(req, res, next){
         let {id, name, vendor_code, inventory_number, rentalPointId, rentalCategoryId, rentalStatusId, note, inspectionDate, oilChangeDate} = req.body.inventory;
-        let {id_company, id_inventory} = req.body;
+        let {id_inventory} = req.body;
+        const id_company = req.user.company.id;
         if(id != null) id = id.trim();
         if(name != null) name = name.trim();
         if(vendor_code != null) vendor_code = vendor_code.trim();
@@ -161,7 +164,7 @@ class StockController{
         return res.json({status: true, message:"Inventory edited"});
     }
     async getAll(req, res, next){
-        const {id_company} = req.query;
+        const id_company = req.user.company.id;
         if (!id_company){
             return next(ApiError.badRequest("Incorrect data entered"));
         }
@@ -170,10 +173,8 @@ class StockController{
     }
 
     async getOne(req, res, next){
-        console.log("111");
-        const {id_company, id_inventory} = req.query;
-        console.log(id_company);
-        console.log(id_inventory);
+        const {id_inventory} = req.query;
+        const id_company = req.user.company.id;
         if (!id_company){
             return next(ApiError.badRequest("Incorrect data entered"));
         }
@@ -183,7 +184,7 @@ class StockController{
     }
 
     async delete(req, res, next){
-        let {id_company} = req.query;
+        const id_company = req.user.company.id;
         let {id_stock} = req.query;
         const inventory = await Stock.findOne({where: {[Op.and]:[{id: id_stock}, {companyId: id_company}]}});
         if (!inventory){
@@ -196,10 +197,17 @@ class StockController{
 
 
     async uploadImages(req, res, next){
+        const id_company = req.user.company.id;
+        const {id_stock} = req.body;
+        const {images} = req.files;
+
         try {
-            const {id_stock} = req.body;
-            const {images} = req.files;
             const expanse = images.name.split('.').pop();
+            let checkStock = await Stock.findOne({where:{[Op.and]:[{id: id_stock}, {companyId:id_company}]}});
+            if (!checkStock){
+                return next(ApiError.badRequest("Incorrect data entered"));
+            }
+
             if (['png', 'jpg', 'jpeg'].indexOf(expanse) < 0){
                 return next(ApiError.badRequest("Photo extension is not supported"));
             }
@@ -213,17 +221,18 @@ class StockController{
     }
 
     async deleteImages(req, res, next){
-        const {id_company, images_name} = req.body;
+        const {images_name} = req.body;
+        const id_company = req.user.company.id;
         if (!images_name){
-            return next(ApiError.badRequest("Incorrect data entered1"));
+            return next(ApiError.badRequest("Incorrect data entered"));
         }
         let checkImage = await ImagesStock.findOne({where:{path: images_name}});
         if (!checkImage){
-            return next(ApiError.badRequest("Incorrect data entered2"));
+            return next(ApiError.badRequest("Incorrect data entered"));
         }
         let checkStock = await Stock.findOne({where:{[Op.and]:[{id: checkImage.stockId}, {companyId:id_company}]}});
         if (!checkStock){
-            return next(ApiError.badRequest("Incorrect data entered3"));
+            return next(ApiError.badRequest("Incorrect data entered"));
         }
 
         let file = path.resolve(__dirname, '..', 'static', 'images', images_name);
@@ -244,7 +253,7 @@ class StockController{
     }
 
     async getRentalPoints(req, res, next){
-        const {id_company} = req.query;
+        const id_company = req.user.company.id;
         if (!id_company){
             return next(ApiError.badRequest("Incorrect data entered"));
         }

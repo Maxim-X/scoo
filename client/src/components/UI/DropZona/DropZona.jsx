@@ -82,13 +82,13 @@ const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadIma
             <Col>
                 <div className={classes.allFilesZona}>
                     {uploadServerImage && uploadServerImage.map((file)=>
-                        <div className={classes.fileBlock}>
+                        <div className={classes.fileBlock} key={file.path}>
                             <img onClick={e => window.open(process.env.REACT_APP_API_URL +"/"+ file.path)} src={process.env.REACT_APP_API_URL +"/"+ file.path} />
                             <div onClick={e => del_img(file.path)} className={classes.butDelete}>Delete</div>
                         </div>
                     )}
                     {saveUploadImages && saveUploadImages.map((file)=>
-                        <div className={classes.fileBlock}>
+                        <div className={classes.fileBlock} key={file[0]['name']}>
                                 <div>{file[0]['name']}</div>
                                 <div onClick={e => del_img(file[0]['name'])} className={classes.butDelete}>Delete</div>
                         </div>

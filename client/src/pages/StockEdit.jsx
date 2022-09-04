@@ -49,16 +49,20 @@ const StockEdit = () => {
     }, []);
 
     const  update_files_info = () =>{
-        get_all_images_inventory(user.user.company.id, id).then(images => setAllFiles(images));
+        get_all_images_inventory(id).then(images => setAllFiles(images));
     }
 
-    const get_inventory_info = React.useMemo(async() => {
-
-        get_rental_points(user.user.company.id).then(points => setListPoints(points));
-        get_rental_category(user.user.company.id).then(category => setListCategories(category));
-        get_rental_status(user.user.company.id).then(statuses => setListStatuses(statuses));
+    const reset_alert = () => {
         setSuccessAdd("");
         setFailAdd("");
+    }
+
+    React.useMemo(async() => {
+        get_rental_points().then(points => setListPoints(points));
+        get_rental_category().then(category => setListCategories(category));
+        get_rental_status().then(statuses => setListStatuses(statuses));
+
+        reset_alert();
         if (id == undefined){
             setName("");
             setVendorCode("");
@@ -73,16 +77,16 @@ const StockEdit = () => {
             try {
                 if (!parseInt(id)){ window.location.replace("/stock"); }
 
-                let stock = await get_inventory(user.user.company.id, id);
-                setName(stock.name);
-                setVendorCode(stock.vendor_code);
-                setInventoryNumber(stock.inventory_number);
-                setRentalPointId(stock.rentalPointId);
-                setRentalCategoryId(stock.rentalCategoryId);
-                setRentalStatusId(stock.rentalStatusId);
-                setNote(stock.note);
-                setInspectionDate(stock.inspection_date);
-                setOilChangeDate(stock.oil_change);
+                let stock = await get_inventory(id);
+                setName(stock.name == null ? "" : stock.name);
+                setVendorCode(stock.vendor_code == null ? "" : stock.vendor_code);
+                setInventoryNumber(stock.inventory_number == null ? "" : stock.inventory_number);
+                setRentalPointId(stock.rentalPointId == null ? "" : stock.rentalPointId);
+                setRentalCategoryId(stock.rentalCategoryId == null ? "" : stock.rentalCategoryId);
+                setRentalStatusId(stock.rentalStatusId == null ? "" : stock.rentalStatusId);
+                setNote(stock.note == null ? "" : stock.note);
+                setInspectionDate(stock.inspection_date == null ? "" : stock.inspection_date);
+                setOilChangeDate(stock.oil_change == null ? "" : stock.oil_change);
             } catch (e) {
                 window.location.replace("/stock");
             }
@@ -90,9 +94,7 @@ const StockEdit = () => {
     },[id]);
 
     const add_stock = async (a) =>{
-        setSuccessAdd("");
-        setFailAdd("");
-        console.log(inspectionDate)
+        reset_alert();
         try {
             const inventory ={
                 name,
@@ -107,9 +109,9 @@ const StockEdit = () => {
             };
             let data;
             if (id){
-                data = await edit_inventory(inventory, user.user.company.id, id);
+                data = await edit_inventory(inventory, id);
             }else {
-                data = await add_inventory(inventory, user.user.company.id);
+                data = await add_inventory(inventory);
                 if (data != undefined && saveUploadImages.length != 0){
                     for (let i = 0; i < saveUploadImages.length; i++){
                         try {
@@ -125,19 +127,20 @@ const StockEdit = () => {
     }
 
     const uploadImageStock = (files, id_stock) =>{
-        const FormData1 = new FormData();
-        FormData1.append('images', files[0]);
-        FormData1.append('id_company', user.user.company.id);
-        FormData1.append('id_stock', id_stock);
-        const upload = upload_images_inventory(FormData1);
-        if (upload){
-            update_files_info();
+        for (let i = 0; i < files.length; i++) {
+            const FormData1 = new FormData();
+            FormData1.append('images', files[0]);
+            FormData1.append('id_stock', id_stock);
+            const upload = upload_images_inventory(FormData1);
+            if (upload) {
+                update_files_info();
+            }
         }
-        return upload;
+        return true;
     }
 
     const deleteImageStock = async (image_name) =>{
-        const del = await del_images_inventory(user.user.company.id, image_name);
+        const del = await del_images_inventory(image_name);
         if (del){
             update_files_info();
         }
@@ -183,35 +186,39 @@ const StockEdit = () => {
                             <Row>
                                 <Col><Form.Group className="mb-3">
                                     <Form.Label>Rental point</Form.Label>
-                                        <Form.Select aria-label="Rental point" onChange={e => setRentalPointId(e.target.value)}>
+                                        <Form.Select aria-label="Rental point" value={rentalPointId} onChange={e => setRentalPointId(e.target.value)}>
                                             <option value="0">Choose a rental location</option>
                                             {listPoints.map((point) =>
-                                                point['id'] == rentalPointId ? <option value={point['id']} selected>{point['name']}</option>
-                                                :<option value={point['id']}>{point['name']}</option>
+                                                point['id'] == rentalPointId ?
+                                                <option key={point['id']} value={point['id']}>{point['name']}</option>
+                                                :
+                                                <option key={point['id']} value={point['id']}>{point['name']}</option>
                                             )}
                                         </Form.Select>
                                     </Form.Group>
                                 </Col>
                                 <Col><Form.Group className="mb-3">
                                     <Form.Label>Category</Form.Label>
-                                    <Form.Select aria-label="Rental category" onChange={e => setRentalCategoryId(e.target.value)}>
+                                    <Form.Select aria-label="Rental category" value={rentalCategoryId} onChange={e => setRentalCategoryId(e.target.value)}>
                                         <option value="0">Choose a rental category</option>
                                         {listCategories.map((category) =>
                                             category['id'] == rentalCategoryId ?
-                                                <option value={category['id']} selected>{category['name']}</option>
-                                                :<option value={category['id']}>{category['name']}</option>
+                                                <option key={category['id']} value={category['id']}>{category['name']}</option>
+                                                :
+                                                <option key={category['id']} value={category['id']}>{category['name']}</option>
                                         )}
                                     </Form.Select>
                                 </Form.Group>
                                 </Col>
                                 <Col><Form.Group className="mb-3">
                                     <Form.Label>Status</Form.Label>
-                                    <Form.Select aria-label="Rental Status" onChange={e => setRentalStatusId(e.target.value)}>
+                                    <Form.Select aria-label="Rental Status" value={rentalStatusId} onChange={e => setRentalStatusId(e.target.value)}>
                                         <option value="0">Select the rental status</option>
                                         {listStatuses.map((status) =>
                                             status['id'] == rentalStatusId ?
-                                                <option value={status['id']} selected>{status['name']}</option>
-                                                :<option value={status['id']}>{status['name']}</option>
+                                                <option key={status['id']} value={status['id']}>{status['name']}</option>
+                                                :
+                                                <option key={status['id']} value={status['id']}>{status['name']}</option>
                                         )}
                                     </Form.Select>
                                 </Form.Group>

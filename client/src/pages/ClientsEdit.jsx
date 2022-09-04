@@ -50,15 +50,19 @@ const ClientsEdit = () => {
         update_files_info();
     }, []);
 
-    const  update_files_info = () =>{
-        console.log("update");
-        get_all_images(user.user.company.id, id).then(images => setAllFiles(images));
+    const  update_files_info = async () =>{
+        if (id){
+            await get_all_images(id).then(images => setAllFiles(images));
+        }
     }
 
-    const get_client_info = React.useMemo(async() => {
-
+    const reset_alert = () => {
         setSuccessAdd("");
         setFailAdd("");
+    }
+
+    React.useMemo(async() => {
+        reset_alert();
         if (id == undefined){
             setName("");
             setPhone("");
@@ -76,23 +80,23 @@ const ClientsEdit = () => {
                 if (!parseInt(id)){
                     window.location.replace("/clients");
                 }
-                let client = await get_client(id, user.user.company.id);
-                setName(client.name);
-                setDriverLicenseNumber(client.driver_license_number);
-                setNumberPass(client.passport_number);
-                setBirthday(client.birthday);
-                setAnotherDocumentName(client.another_document_name);
-                setAnotherDocumentNumber(client.another_document_number);
-                setAddress(client.address);
+                let client = await get_client(id);
+                setName(client.name == null ? "" : client.name);
+                setDriverLicenseNumber(client.driver_license_number == null ? "" : client.driver_license_number);
+                setNumberPass(client.passport_number == null ? "" : client.passport_number);
+                setBirthday(client.birthday == null ? "" : client.birthday);
+                setAnotherDocumentName(client.another_document_name == null ? "" : client.another_document_name);
+                setAnotherDocumentNumber(client.another_document_number == null ? "" : client.another_document_number);
+                setAddress(client.address == null ? "" : client.address);
 
-                let phoneNumber = await get_phone_client(user.user.company.id, id);
+                let phoneNumber = await get_phone_client(id);
                 let allPhone = [];
                 phoneNumber.map((Number) =>{
                     allPhone.push(Number.number);
                 });
                 setPhonesClient(allPhone);
 
-                let emails = await get_emails_client(user.user.company.id, id);
+                let emails = await get_emails_client(id);
                 let allEmails = [];
                 emails.map((em) =>{
                     allEmails.push(em.email);
@@ -105,9 +109,8 @@ const ClientsEdit = () => {
         }
     },[id]);
 
-    const add_client = async (a) =>{
-        setSuccessAdd("");
-        setFailAdd("");
+    const add_client = async () =>{
+        reset_alert();
         try {
             const client ={
                 name: name,
@@ -123,9 +126,9 @@ const ClientsEdit = () => {
             };
             let data;
             if (id){
-                data = await edit_clients(client, user.user.company.id, id);
+                data = await edit_clients(client, id);
             }else {
-                    data = await add_clients(client, user.user.company.id);
+                    data = await add_clients(client);
                     if (data != undefined && saveUploadImages.length != 0){
                         for (let i = 0; i < saveUploadImages.length; i++){
                             try {
@@ -143,11 +146,11 @@ const ClientsEdit = () => {
     }
 
     const add_phone = async () =>{
-        setFailAdd("");
+        reset_alert();
         if (phone.trim() != "") {
             try {
                 if (id) {
-                    const add_phone = await add_phone_client(phone, user.user.company.id, id);
+                    const add_phone = await add_phone_client(phone, id);
                 }
                 setPhonesClient([...phonesClient, phone]);
                 setPhone("");
@@ -160,7 +163,7 @@ const ClientsEdit = () => {
     const del_phone = async (phoneNum) =>{
         try {
             if (id){
-                const del_phone = await del_phone_client(phoneNum, user.user.company.id, id);
+                const del_phone = await del_phone_client(phoneNum, id);
             }
 
             setPhonesClient([...phonesClient.filter(function(f) { return f !== phoneNum })]);
@@ -169,11 +172,11 @@ const ClientsEdit = () => {
         }
     }
     const add_email = async (email) =>{
-        setFailAdd("");
+        reset_alert();
         if (email.trim() != "") {
             try {
                 if (id) {
-                    const add_email = await add_email_client(email, user.user.company.id, id);
+                    const add_email = await add_email_client(email, id);
                 }
                 setEmailClient([...emailClient, email]);
                 setEmail("");
@@ -186,7 +189,7 @@ const ClientsEdit = () => {
     const del_email = async (email) =>{
         try {
             if (id){
-                const del_email = await del_email_client(email, user.user.company.id, id);
+                const del_email = await del_email_client(email, id);
             }
 
             setEmailClient([...emailClient.filter(function(f) { return f !== email })]);
@@ -196,19 +199,21 @@ const ClientsEdit = () => {
     }
 
     const uploadImageClient = (files, id_client) =>{
-        const FormData1 = new FormData();
-        FormData1.append('images', files[0]);
-        FormData1.append('id_company', user.user.company.id);
-        FormData1.append('id_client', id_client);
-        const upload = upload_images_client(FormData1);
-        if (upload){
-            update_files_info();
+        for (let i = 0; i < files.length; i++){
+            const FormData1 = new FormData();
+            FormData1.append('images', files[i]);
+            FormData1.append('id_client', id_client);
+            const upload = upload_images_client(FormData1);
+            if (upload){
+                update_files_info();
+            }
         }
-        return upload;
+
+        return true;
     }
 
     const deleteImageClient = async (image_name) =>{
-        const del = await del_images(user.user.company.id, image_name);
+        const del = await del_images(image_name);
         if (del){
             update_files_info();
         }

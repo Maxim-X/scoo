@@ -7,7 +7,8 @@ const fs = require('fs').promises;
 class ClientController {
     async create(req, res, next){
         let {name, email, driver_license_number, numberPass, birthday, another_document_name, another_document_number, phonesClient, emailClient, address} = req.body.client;
-        let {id_company} = req.body;
+        const id_company = req.user.company.id;
+
         if(name != null)  name = name.trim();
         if(email != null)  email = email.trim();
         if(driver_license_number != null)  driver_license_number = driver_license_number.trim();
@@ -78,7 +79,8 @@ class ClientController {
 
     async edit(req, res, next){
         let {name, email, driver_license_number, numberPass, birthday, another_document_name, another_document_number, address} = req.body.client;
-        let {id_company, id_client} = req.body;
+        const {id_client} = req.body;
+        const id_company = req.user.company.id;
         if(name != null) name = name.trim();
         if(email != null) email = email.trim();
         if(driver_license_number != null) driver_license_number = driver_license_number.trim();
@@ -139,19 +141,34 @@ class ClientController {
 
 
     async delete(req, res, next){
-        let {id_company} = req.query;
+        const id_company = req.user.company.id;
         let {id_client} = req.query;
         const client = await Client.findOne({where:{[Op.and]:[{id: id_client}, {companyId: id_company}]}})
         if (!client){
             return next(ApiError.badRequest("Client not specified"));
         }
+        // Удаляем номера телефонов клиента
+        await PhoneNumbers.destroy({where:{clientId: id_client}})
+
+        // Удаляем почтовые адреса клиента
+        await ClientsEmail.destroy({where:{clientId: id_client}})
+
+        // Удаляем картинки клиента
+        const all_images = await ImagesClient.findAll({where:{clientId: id_client}})
+        for (const image of all_images){
+            let file = path.resolve(__dirname, '..', 'static', 'images', image.path);
+            await fs.unlink(file);
+            const del_images = await ImagesClient.destroy({where:{id: image.id}});
+        }
+
         const del = await Client.destroy({where:{id: id_client}});
         return res.json({status: true, message:"Client removed"});
 
     }
 
     async getAll(req, res, next){
-        const {id_company} = req.query;
+
+        const id_company = req.user.company.id;
         if (!id_company){
             return next(ApiError.badRequest("Incorrect data entered"));
         }
@@ -176,7 +193,8 @@ class ClientController {
     }
 
     async getOne(req, res, next){
-        const {id_company, id_client} = req.query;
+        const {id_client} = req.query;
+        const id_company = req.user.company.id;
         if (!id_company){
             return next(ApiError.badRequest("Incorrect data entered"));
         }
@@ -189,7 +207,8 @@ class ClientController {
     }
 
     async addPhone(req, res, next){
-        let {id_company, id_client, number} = req.body;
+        let {id_client, number} = req.body;
+        const id_company = req.user.company.id;
         number = number.trim();
         if (!id_company){
             return next(ApiError.badRequest("Incorrect data entered"));
@@ -275,8 +294,6 @@ class ClientController {
         try {
             const {id_client} = req.body;
             const {images} = req.files;
-            console.log(id_client);
-            console.log(images);
             const expanse = images.name.split('.').pop();
             if (['png', 'jpg', 'jpeg'].indexOf(expanse) < 0){
                 return next(ApiError.badRequest("Photo extension is not supported"));
@@ -290,7 +307,8 @@ class ClientController {
         }
     }
     async deleteImages(req, res, next){
-        const {id_company, images_name} = req.body;
+        const {images_name} = req.body;
+        const id_company = req.user.company.id;
         if (!images_name){
             return next(ApiError.badRequest("Incorrect data entered"));
         }
@@ -309,7 +327,6 @@ class ClientController {
         await fs.unlink(file);
         const del_images = await ImagesClient.destroy({where:{id: checkImage.id}});
         return res.json(del_images);
-        // return res.json("dd");
     }
 
     async getAllImages(req, res, next){
