@@ -53,6 +53,9 @@ const Stock = sequelize.define('stock', {
     name: {type: DataTypes.STRING, allowNull: false},
     vendor_code: {type: DataTypes.STRING, allowNull: false},
     inventory_number: {type: DataTypes.STRING, allowNull: false},
+    note: {type: DataTypes.TEXT, allowNull: true},
+    inspection_date: {type: DataTypes.DATEONLY, allowNull: true},
+    oil_change: {type: DataTypes.DATEONLY, allowNull: true}
 })
 
 const RentalPoints = sequelize.define('rental_points', {

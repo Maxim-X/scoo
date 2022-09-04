@@ -8,7 +8,6 @@ class ClientController {
     async create(req, res, next){
         let {name, email, driver_license_number, numberPass, birthday, another_document_name, another_document_number, phonesClient, emailClient, address} = req.body.client;
         let {id_company} = req.body;
-
         if(name != null)  name = name.trim();
         if(email != null)  email = email.trim();
         if(driver_license_number != null)  driver_license_number = driver_license_number.trim();
@@ -46,7 +45,7 @@ class ClientController {
             another_document_number = null;
         }
         if (!address || address.length == 0){
-            another_document_number = null;
+            address = null;
         }
         const add_client = await Client.create(
             {
@@ -80,7 +79,6 @@ class ClientController {
     async edit(req, res, next){
         let {name, email, driver_license_number, numberPass, birthday, another_document_name, another_document_number, address} = req.body.client;
         let {id_company, id_client} = req.body;
-
         if(name != null) name = name.trim();
         if(email != null) email = email.trim();
         if(driver_license_number != null) driver_license_number = driver_license_number.trim();
@@ -116,23 +114,22 @@ class ClientController {
             birthday = null;
         }
         if (!another_document_name || another_document_name.length == 0){
-            birthday = null;
+            another_document_name = null;
         }
         if (!another_document_number || another_document_number.length == 0){
-            birthday = null;
+            another_document_number = null;
         }
         if (!address || address.length == 0){
             address = null;
         }
-
         client.set({
             name: name,
             email: email,
-            driver_license_number: driver_license_number,
-            numberPass: numberPass,
-            birthday: birthday,
-            another_document_name: another_document_name,
-            another_document_number: another_document_number,
+            driver_license_number,
+            numberPass,
+            birthday,
+            another_document_name,
+            another_document_number,
             address: address
         });
 

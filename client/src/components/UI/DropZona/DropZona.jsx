@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {del_images_inventory} from "../../../http/stockAPI";
 import {Col, Row} from "react-bootstrap";
 import classes from "./DropZona.module.css";
 import {AiOutlineCloudUpload} from "react-icons/ai";
 
-const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadImages, update_files_info, uploadImageFunc}) => {
+const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadImages, update_files_info, uploadImageFunc, deleteItem}) => {
     const [uploadImage, setUploadImage] = useState([]);
     const [drag, setDrag] = useState(false);
     const [uploadServerImage, setUploadServerImage] = useState([]);
@@ -37,7 +36,7 @@ const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadIma
         }
 
         if (id){
-            const upload = uploadImageFunc(files);
+            const upload = uploadImageFunc(files, id);
             if (upload){
                 update_files_info();
             }
@@ -53,7 +52,7 @@ const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadIma
     const del_img = async (images_name) =>{
         if (id){
             try {
-                const del = await del_images_inventory(user.user.company.id, images_name);
+                const del = deleteItem(images_name);
             }catch (e){
                 console.log(e.response.data.message);
             }

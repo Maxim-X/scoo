@@ -55,6 +55,12 @@ body {
 .blockScrollTable{
     overflow-x: auto;
 }
+.grid_checkbox_th{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    justify-items: start;
+    text-align: right;
+}
 
 @font-face {
     font-family: 'Overpass';

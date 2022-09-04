@@ -9,15 +9,16 @@ const {promises: fs} = require("fs");
 
 class StockController{
     async create(req, res, next){
-        let {name, vendor_code, inventory_number, rentalPointId, rentalCategoryId, rentalStatusId} = req.body.client;
+        let {name, vendor_code, inventory_number, rentalPointId, rentalCategoryId, rentalStatusId, note, inspectionDate, oilChangeDate} = req.body.inventory;
         let {id_company} = req.body;
 
         name = name.trim();
         vendor_code = vendor_code.trim();
         inventory_number = inventory_number.trim();
-        rentalPointId = rentalPointId.trim();
-        rentalCategoryId = rentalCategoryId.trim();
-        rentalStatusId = rentalStatusId.trim();
+        note = note.trim();
+        inspectionDate = inspectionDate.trim();
+        oilChangeDate = oilChangeDate.trim();
+
         if (!name || name.length == 0){
             return next(ApiError.badRequest("Name not specified"));
         }
@@ -38,24 +39,33 @@ class StockController{
             return next(ApiError.badRequest("Rental point not specified"));
         }
         const checkRentalPointId = RentalPoints.findOne({where:{[Op.and]:[{companyId: id_company}, {id: rentalPointId}]}})
-        if (checkRentalPointId){
+        if (!checkRentalPointId){
             return next(ApiError.badRequest("Rental point not specified"));
         }
 
         if (!rentalCategoryId || rentalCategoryId <= 0){
             return next(ApiError.badRequest("Rental category not specified"));
         }
-        const checkRentalCategoryId = RentalCategories.findOne({where:{[Op.and]:[{companyId: id_company}, {id: rentalCategoryId}]}})
-        if (checkRentalCategoryId){
+        const checkRentalCategoryId = RentalCategories.findOne({where:{id: rentalCategoryId}});
+        if (!checkRentalCategoryId){
             return next(ApiError.badRequest("Rental category not specified"));
         }
 
         if (!rentalStatusId || rentalStatusId <= 0){
-            return next(ApiError.badRequest("Rental category not specified"));
-        }
-        const checkRentalStatusId = RentalStatuses.findOne({where:{companyId: id_company}});
-        if (checkRentalStatusId){
             return next(ApiError.badRequest("Rental statuses not specified"));
+        }
+        const checkRentalStatusId = RentalStatuses.findOne({where:{id: rentalStatusId}});
+        if (!checkRentalStatusId){
+            return next(ApiError.badRequest("Rental statuses not specified"));
+        }
+        if (!note || note.length == 0){
+            note = null;
+        }
+        if (!inspectionDate || inspectionDate.length == 0){
+            inspectionDate = null;
+        }
+        if (!oilChangeDate || oilChangeDate.length == 0){
+            oilChangeDate = null;
         }
 
         const add_inventory = await Stock.create(
@@ -66,20 +76,25 @@ class StockController{
                 companyId: id_company,
                 rentalPointId,
                 rentalCategoryId,
-                rentalStatusId
+                rentalStatusId,
+                note,
+                inspection_date:inspectionDate,
+                oil_change:oilChangeDate
             });
 
-        return res.json({status: true, message:"Client added", inventory_id: add_inventory.id});
+        return res.json({status: true, message:"Inventory added", inventory_id: add_inventory.id});
     }
 
     async edit(req, res, next){
-        let {id, name, vendor_code, inventory_number, rentalPointId, rentalCategoryId, rentalStatusId} = req.body.inventory;
+        let {id, name, vendor_code, inventory_number, rentalPointId, rentalCategoryId, rentalStatusId, note, inspectionDate, oilChangeDate} = req.body.inventory;
         let {id_company, id_inventory} = req.body;
-
         if(id != null) id = id.trim();
         if(name != null) name = name.trim();
         if(vendor_code != null) vendor_code = vendor_code.trim();
         if(inventory_number != null) inventory_number = inventory_number.trim();
+        if(note != null) note = note.trim();
+        if(inspectionDate != null) inspectionDate = inspectionDate.trim();
+        if(oilChangeDate != null) oilChangeDate = oilChangeDate.trim();
         if (!name || name.length == 0){
             return next(ApiError.badRequest("Name not specified"));
         }
@@ -113,17 +128,21 @@ class StockController{
         }
 
         if (!rentalStatusId || rentalStatusId <= 0){
-            return next(ApiError.badRequest("Rental category not specified"));
+            return next(ApiError.badRequest("Rental statuses not specified"));
         }
         const checkRentalStatusId = RentalStatuses.findOne({});
         if (!checkRentalStatusId){
             return next(ApiError.badRequest("Rental statuses not specified"));
         }
-        console.log(inventory_number)
-        console.log(id_company)
-        console.log(rentalPointId)
-        console.log(rentalCategoryId)
-        console.log(rentalStatusId)
+        if (!note || note.length == 0){
+            note = null;
+        }
+        if (!inspectionDate || inspectionDate.length == 0){
+            inspectionDate = null;
+        }
+        if (!oilChangeDate || oilChangeDate.length == 0){
+            oilChangeDate = null;
+        }
 
         stock.set({
             name,
@@ -132,11 +151,14 @@ class StockController{
             companyId: id_company,
             rentalPointId,
             rentalCategoryId,
-            rentalStatusId
+            rentalStatusId,
+            note,
+            inspection_date:inspectionDate,
+            oil_change:oilChangeDate
         });
 
         const save = await stock.save();
-        return res.json({status: true, message:"Stock edit"});
+        return res.json({status: true, message:"Inventory edited"});
     }
     async getAll(req, res, next){
         const {id_company} = req.query;
@@ -158,6 +180,18 @@ class StockController{
         const inventory = await Stock.findOne({where: {[Op.and]:[{id: id_inventory}, {companyId: id_company}]}});
 
         return res.json(inventory);
+    }
+
+    async delete(req, res, next){
+        let {id_company} = req.query;
+        let {id_stock} = req.query;
+        const inventory = await Stock.findOne({where: {[Op.and]:[{id: id_stock}, {companyId: id_company}]}});
+        if (!inventory){
+            return next(ApiError.badRequest("Inventory is not specified"));
+        }
+        const del = await Stock.destroy({where:{id: id_stock}});
+        return res.json({status: true, message:"Inventory removed"});
+
     }
 
 

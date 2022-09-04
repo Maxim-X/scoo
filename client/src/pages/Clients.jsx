@@ -12,7 +12,7 @@ import {useNavigate} from "react-router-dom";
 const Clients = () => {
     const {user} = useContext(Context);
     const [clients, setClients] = useState([]);
-    const [head, setHead] = useState([{name: "Name", el: "name", use: true, def: true},{name: "Email", el: "email", use: true, def: true}, {name: "Phone", el: "phone", use: true, def: true}, {name: "Birthday", el: "birthday", use: true, def: false}, {name: "Driver license", el: "driver_license_number", use: false, def: false}, {name: "Passport number", el: "passport_number", use: false, def: false}]);
+    const [head, setHead] = useState([{name: "Name", el: "name", use: true, def: true},{name: "Email", el: "email", use: true, def: true}, {name: "Phone", el: "phone", use: true, def: true}, {name: "Birthday", el: "birthday", use: true, def: false}, {name: "Driver license", el: "driver_license_number", use: false, def: false},{name: "Address", el: "address", use: false, def: false}, {name: "Passport number", el: "passport_number", use: false, def: false}]);
     const [itemSearch, setItemSearch] = useState(['name', 'email', 'phone']);
     const [modalShow, setModalShow] = React.useState(false);
     const [clientEdit, setClientEdit] = useState(0);

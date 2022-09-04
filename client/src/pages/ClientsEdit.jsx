@@ -5,7 +5,7 @@ import MainButton from "../components/UI/MainButton/MainButton";
 import {Context} from "../index";
 import {
     add_clients, add_email_client,
-    add_phone_client, del_email_client,
+    add_phone_client, del_email_client, del_images,
     del_phone_client,
     edit_clients, get_all_images,
     get_client, get_emails_client,
@@ -15,6 +15,7 @@ import RedButton from "../components/UI/RedButton/RedButton";
 import {RiDeleteBack2Fill} from "react-icons/ri";
 import MiniRedButton from "../components/UI/MiniRedButton/MiniRedButton";
 import DropZona from "../components/UI/DropZona/DropZona";
+import {del_images_inventory} from "../http/stockAPI";
 
 const ClientsEdit = () => {
     const navigate = useNavigate();
@@ -112,28 +113,24 @@ const ClientsEdit = () => {
                 name: name,
                 email: email,
                 driver_license_number: driverLicenseNumber,
-                numberPass: numberPass,
-                birthday: birthday,
+                numberPass,
+                birthday,
                 another_document_name: anotherDocumentName,
                 another_document_number: anotherDocumentNumber,
-                phonesClient: phonesClient,
-                emailClient: emailClient,
-                address: address,
+                phonesClient,
+                emailClient,
+                address,
             };
             let data;
             if (id){
                 data = await edit_clients(client, user.user.company.id, id);
             }else {
                     data = await add_clients(client, user.user.company.id);
-                console.log(saveUploadImages.length)
-                console.log(data)
-                    if (saveUploadImages.length != 0){
+                    if (data != undefined && saveUploadImages.length != 0){
                         for (let i = 0; i < saveUploadImages.length; i++){
-                            const FormData1 = new FormData();
-                            FormData1.append('images', saveUploadImages[i][0]);
-                            FormData1.append('id_company', user.user.company.id);
-                            FormData1.append('id_client', data.client_id);
-                            const upload = await upload_images_client(FormData1);
+                            try {
+                                const upload = uploadImageClient(saveUploadImages[i], data.client_id);
+                            }catch (e){}
                         }
                     }
 
@@ -198,13 +195,24 @@ const ClientsEdit = () => {
         }
     }
 
-    const uploadImageClient = (files) =>{
+    const uploadImageClient = (files, id_client) =>{
         const FormData1 = new FormData();
         FormData1.append('images', files[0]);
         FormData1.append('id_company', user.user.company.id);
-        FormData1.append('id_client', id);
+        FormData1.append('id_client', id_client);
         const upload = upload_images_client(FormData1);
+        if (upload){
+            update_files_info();
+        }
         return upload;
+    }
+
+    const deleteImageClient = async (image_name) =>{
+        const del = await del_images(user.user.company.id, image_name);
+        if (del){
+            update_files_info();
+        }
+        return del;
     }
 
 
@@ -266,20 +274,6 @@ const ClientsEdit = () => {
                     </Card>
                     <Card className="card p-4 mb-3" >
                         <Form.Group className="mb-3">
-                            <Form.Label>Phone</Form.Label>
-                            <Row>
-                                <Col><Form.Control value={phone} onChange={e => setPhone(e.target.value)} type="tel" placeholder="Enter phone number" /></Col>
-                                <Col md="auto"><MainButton variant="primary" onClick={e => add_phone(phone)}>Add phone</MainButton></Col>
-                            </Row>
-                        </Form.Group>
-                        <Card className="card p-3 mb-3 d-flex gap-4 flex-row">
-                            {phonesClient.map((phone)=>
-                                <span key={phone}>{phone} <MiniRedButton onClick={e => del_phone(phone)}><RiDeleteBack2Fill/></MiniRedButton></span>
-                            )}
-                        </Card>
-                    </Card>
-                    <Card className="card p-4 mb-3" >
-                        <Form.Group className="mb-3">
                             <Form.Label>E-mail</Form.Label>
                             <Row>
                                 <Col><Form.Control value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder="Enter email" /></Col>
@@ -291,11 +285,23 @@ const ClientsEdit = () => {
                                 <span key={email}>{email} <MiniRedButton onClick={e => del_email(email)}><RiDeleteBack2Fill/></MiniRedButton></span>
                             )}
                         </Card>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Phone</Form.Label>
+                            <Row>
+                                <Col><Form.Control value={phone} onChange={e => setPhone(e.target.value)} type="tel" placeholder="Enter phone number" /></Col>
+                                <Col><MainButton variant="primary" onClick={e => add_phone(phone)}>Add phone</MainButton></Col>
+                            </Row>
+                        </Form.Group>
+                        <Card className="card p-3 mb-3 d-flex gap-4 flex-row">
+                            {phonesClient.map((phone)=>
+                                <span key={phone}>{phone} <MiniRedButton onClick={e => del_phone(phone)}><RiDeleteBack2Fill/></MiniRedButton></span>
+                            )}
+                        </Card>
                     </Card>
 
                     <Card className="card p-4 ">
 
-                    <DropZona user={user} id={id} uploadImageFunc={uploadImageClient} update_files_info={update_files_info} allFiles={allFiles} saveUploadImages={saveUploadImages} setSaveUploadImages={setSaveUploadImages}/>
+                    <DropZona user={user} id={id} deleteItem={deleteImageClient} uploadImageFunc={uploadImageClient} update_files_info={update_files_info} allFiles={allFiles} saveUploadImages={saveUploadImages} setSaveUploadImages={setSaveUploadImages}/>
                     </Card>
                 </Col>
             </Row>

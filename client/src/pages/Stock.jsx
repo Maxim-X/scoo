@@ -1,14 +1,12 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Card, Col, Container, Form, Row, Table} from "react-bootstrap";
+import {Card, Col, Container, Form, Row} from "react-bootstrap";
 import SearchInput from "../components/UI/SearchInput/SearchInput";
 import MainButton from "../components/UI/MainButton/MainButton";
 import {IoIosAdd} from "react-icons/io";
-import ModalClient from "../components/UI/ModalClient/ModalClient";
 import TableMain from "../components/TableMain";
 import {Context} from "../index";
 import {useNavigate} from "react-router-dom";
-import {get_stock, add_inventory, get_rental_points, get_rental_category, get_rental_status} from "../http/stockAPI";
-import {forEach} from "react-bootstrap/ElementChildren";
+import {get_stock, del_inventory, get_rental_points, get_rental_category, get_rental_status} from "../http/stockAPI";
 
 const Stock = () => {
     const {user} = useContext(Context);
@@ -58,9 +56,9 @@ const Stock = () => {
         setHead(elem);
     }
 
-    const deleteClient = async(id_client) =>{
-        if (window.confirm('Are you sure you want to delete the user?')){
-            //let dClient = await del_clients(user.user.company.id, id_client);
+    const deleteClient = async(id_stock) =>{
+        if (window.confirm('Are you sure you want to delete inventory?')){
+            let dInvent = await del_inventory(user.user.company.id, id_stock);
             reloading();
         }
     }

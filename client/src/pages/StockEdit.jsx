@@ -6,7 +6,7 @@ import {
     add_inventory,
     get_all_images_inventory,
     upload_images_inventory,
-    get_inventory, get_rental_points, get_rental_category, get_rental_status, edit_inventory
+    get_inventory, get_rental_points, get_rental_category, get_rental_status, edit_inventory, del_images_inventory
 } from "../http/stockAPI";
 import {Alert, Card, Col, Container, Form, Row} from "react-bootstrap";
 import RedButton from "../components/UI/RedButton/RedButton";
@@ -29,6 +29,9 @@ const StockEdit = () => {
     const [rentalPointId, setRentalPointId] = useState("");
     const [rentalCategoryId, setRentalCategoryId] = useState("");
     const [rentalStatusId, setRentalStatusId] = useState("");
+    const [note, setNote] = useState("");
+    const [inspectionDate, setInspectionDate] = useState("");
+    const [oilChangeDate, setOilChangeDate] = useState("");
 
     const [saveUploadImages, setSaveUploadImages] = useState([]);
 
@@ -63,6 +66,9 @@ const StockEdit = () => {
             setRentalPointId("");
             setRentalCategoryId("");
             setRentalStatusId("");
+            setNote("");
+            setInspectionDate("");
+            setOilChangeDate("");
         }else {
             try {
                 if (!parseInt(id)){ window.location.replace("/stock"); }
@@ -74,8 +80,11 @@ const StockEdit = () => {
                 setRentalPointId(stock.rentalPointId);
                 setRentalCategoryId(stock.rentalCategoryId);
                 setRentalStatusId(stock.rentalStatusId);
+                setNote(stock.note);
+                setInspectionDate(stock.inspection_date);
+                setOilChangeDate(stock.oil_change);
             } catch (e) {
-                //window.location.replace("/stock");
+                window.location.replace("/stock");
             }
         }
     },[id]);
@@ -83,20 +92,31 @@ const StockEdit = () => {
     const add_stock = async (a) =>{
         setSuccessAdd("");
         setFailAdd("");
+        console.log(inspectionDate)
         try {
             const inventory ={
                 name,
                 vendor_code: vendorCode,
                 inventory_number: inventoryNumber,
-                rentalPointId: rentalPointId,
-                rentalCategoryId: rentalCategoryId,
-                rentalStatusId: rentalStatusId,
+                rentalPointId,
+                rentalCategoryId,
+                rentalStatusId,
+                note,
+                inspectionDate,
+                oilChangeDate
             };
             let data;
             if (id){
                 data = await edit_inventory(inventory, user.user.company.id, id);
             }else {
                 data = await add_inventory(inventory, user.user.company.id);
+                if (data != undefined && saveUploadImages.length != 0){
+                    for (let i = 0; i < saveUploadImages.length; i++){
+                        try {
+                            const upload = uploadImageStock(saveUploadImages[i], data.inventory_id);
+                        }catch (e){}
+                    }
+                }
             }
             setSuccessAdd(data.message);
         }catch (e){
@@ -104,13 +124,24 @@ const StockEdit = () => {
         }
     }
 
-    const uploadImageStock = (files) =>{
+    const uploadImageStock = (files, id_stock) =>{
         const FormData1 = new FormData();
         FormData1.append('images', files[0]);
         FormData1.append('id_company', user.user.company.id);
-        FormData1.append('id_stock', id);
+        FormData1.append('id_stock', id_stock);
         const upload = upload_images_inventory(FormData1);
+        if (upload){
+            update_files_info();
+        }
         return upload;
+    }
+
+    const deleteImageStock = async (image_name) =>{
+        const del = await del_images_inventory(user.user.company.id, image_name);
+        if (del){
+            update_files_info();
+        }
+        return del;
     }
     return (
         <Container fluid className="mainContainer">
@@ -153,6 +184,7 @@ const StockEdit = () => {
                                 <Col><Form.Group className="mb-3">
                                     <Form.Label>Rental point</Form.Label>
                                         <Form.Select aria-label="Rental point" onChange={e => setRentalPointId(e.target.value)}>
+                                            <option value="0">Choose a rental location</option>
                                             {listPoints.map((point) =>
                                                 point['id'] == rentalPointId ? <option value={point['id']} selected>{point['name']}</option>
                                                 :<option value={point['id']}>{point['name']}</option>
@@ -163,6 +195,7 @@ const StockEdit = () => {
                                 <Col><Form.Group className="mb-3">
                                     <Form.Label>Category</Form.Label>
                                     <Form.Select aria-label="Rental category" onChange={e => setRentalCategoryId(e.target.value)}>
+                                        <option value="0">Choose a rental category</option>
                                         {listCategories.map((category) =>
                                             category['id'] == rentalCategoryId ?
                                                 <option value={category['id']} selected>{category['name']}</option>
@@ -174,6 +207,7 @@ const StockEdit = () => {
                                 <Col><Form.Group className="mb-3">
                                     <Form.Label>Status</Form.Label>
                                     <Form.Select aria-label="Rental Status" onChange={e => setRentalStatusId(e.target.value)}>
+                                        <option value="0">Select the rental status</option>
                                         {listStatuses.map((status) =>
                                             status['id'] == rentalStatusId ?
                                                 <option value={status['id']} selected>{status['name']}</option>
@@ -185,9 +219,27 @@ const StockEdit = () => {
                             </Row>
                         </Form>
                     </Card>
+                    <Card className="card p-4 mb-3">
+                        <Form>
+                            <Row>
+                                <Col><Form.Group>
+                                    <Form.Label>Date of next inspection</Form.Label>
+                                    <Form.Control value={inspectionDate} onChange={e => setInspectionDate(e.target.value)} type="date" placeholder="Enter date of next inspection" />
+                                </Form.Group></Col>
+                                <Col><Form.Group>
+                                    <Form.Label>Date of next oil change</Form.Label>
+                                    <Form.Control value={oilChangeDate} onChange={e => setOilChangeDate(e.target.value)} type="date" placeholder="Enter date of next oil change" />
+                                </Form.Group></Col>
+                                <Col><Form.Group>
+                                    <Form.Label>Notes</Form.Label>
+                                    <Form.Control as="textarea" value={note} onChange={e => setNote(e.target.value)} rows={3} />
+                                </Form.Group></Col>
+                            </Row>
+                        </Form>
+                     </Card>
 
                     <Card className="card p-4 ">
-                        <DropZona user={user} id={id} uploadImageFunc={uploadImageStock} update_files_info={update_files_info} allFiles={allFiles} saveUploadImages={saveUploadImages} setSaveUploadImages={setSaveUploadImages}/>
+                        <DropZona user={user} id={id} uploadImageFunc={uploadImageStock} deleteItem={deleteImageStock} update_files_info={update_files_info} allFiles={allFiles} saveUploadImages={saveUploadImages} setSaveUploadImages={setSaveUploadImages}/>
                     </Card>
                 </Col>
             </Row>
