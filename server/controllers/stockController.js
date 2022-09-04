@@ -181,15 +181,15 @@ class StockController{
     async deleteImages(req, res, next){
         const {id_company, images_name} = req.body;
         if (!images_name){
-            return next(ApiError.badRequest("Incorrect data entered"));
+            return next(ApiError.badRequest("Incorrect data entered1"));
         }
         let checkImage = await ImagesStock.findOne({where:{path: images_name}});
         if (!checkImage){
-            return next(ApiError.badRequest("Incorrect data entered"));
+            return next(ApiError.badRequest("Incorrect data entered2"));
         }
         let checkStock = await Stock.findOne({where:{[Op.and]:[{id: checkImage.stockId}, {companyId:id_company}]}});
         if (!checkStock){
-            return next(ApiError.badRequest("Incorrect data entered"));
+            return next(ApiError.badRequest("Incorrect data entered3"));
         }
 
         let file = path.resolve(__dirname, '..', 'static', 'images', images_name);

@@ -24,8 +24,8 @@ export const upload_images_inventory = async (FormData) => {
     return data;
 }
 
-export const get_all_images_inventory = async (id_company, id_client) => {
-    const {data} = await $authHost.get('api/stock/get_all_images', {params:{id_company, id_client}});
+export const get_all_images_inventory = async (id_company, id_stock) => {
+    const {data} = await $authHost.get('api/stock/get_all_images', {params:{id_company, id_stock}});
     return data;
 }
 

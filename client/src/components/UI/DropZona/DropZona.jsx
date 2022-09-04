@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {del_images, get_all_images, upload_images_client} from "../../../http/companyAPI";
+import {del_images_inventory} from "../../../http/stockAPI";
 import {Col, Row} from "react-bootstrap";
 import classes from "./DropZona.module.css";
 import {AiOutlineCloudUpload} from "react-icons/ai";
 
-const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadImages, update_files_info}) => {
+const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadImages, update_files_info, uploadImageFunc}) => {
     const [uploadImage, setUploadImage] = useState([]);
     const [drag, setDrag] = useState(false);
     const [uploadServerImage, setUploadServerImage] = useState([]);
@@ -35,13 +35,9 @@ const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadIma
         }else{
             files = e.target.files;
         }
-        const FormData1 = new FormData();
-        FormData1.append('images', files[0]);
-        FormData1.append('id_company', user.user.company.id);
-        FormData1.append('id_client', id);
 
         if (id){
-            const upload = upload_images_client(FormData1);
+            const upload = uploadImageFunc(files);
             if (upload){
                 update_files_info();
             }
@@ -57,7 +53,7 @@ const DropZona = ({props, user, id, allFiles, saveUploadImages, setSaveUploadIma
     const del_img = async (images_name) =>{
         if (id){
             try {
-                const del = await del_images(user.user.company.id, images_name);
+                const del = await del_images_inventory(user.user.company.id, images_name);
             }catch (e){
                 console.log(e.response.data.message);
             }

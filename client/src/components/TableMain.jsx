@@ -8,7 +8,7 @@ import {useNavigate} from "react-router-dom";
 import {get_phone_client} from "../http/companyAPI";
 import {Context} from "../index";
 
-const TableMain = ({data_head, data_body, setClientEdit, setModalShow, delete_item, data_search, url_edit}) => {
+const TableMain = ({data_head, data_body, delete_item, data_search, url_edit, itemSearch}) => {
     const [selectedSort, setSelectedSort] = useState("");
     const [posts, setPosts] = useState([]);
     const [reverse, setReverse] = useState(false);
@@ -29,16 +29,15 @@ const TableMain = ({data_head, data_body, setClientEdit, setModalShow, delete_it
         if (search == ""){
             setPosts(data_body);
         }else{
-            let sortNameData = data_body.filter(post => post.name.toLowerCase().includes(search.toLowerCase()));
-            let sortEmailData = data_body.filter(post => post.email.toLowerCase().includes(search.toLowerCase()));
-            let sortPhoneData = data_body.filter(post => post.phone.toLowerCase().includes(search.toLowerCase()));
-
-            let sortFullData = [...sortNameData, ...sortEmailData, ...sortPhoneData];
+            let sortFullData = [];
+            itemSearch.forEach(function (item){
+                let sortItemData = data_body.filter(post => post[item].toLowerCase().includes(search.toLowerCase()));
+                sortFullData = [...sortFullData, ...sortItemData];
+            });
             sortFullData = sortFullData.reduce((r, i) =>
-                    !r.some(j => JSON.stringify(i) === JSON.stringify(j)) ? [...r, i] : r
-                , [])
+                !r.some(j => JSON.stringify(i) === JSON.stringify(j)) ? [...r, i] : r
+            , [])
             setPosts(sortFullData);
-
         }
         setSelectedSort("");
         setReverse(false);

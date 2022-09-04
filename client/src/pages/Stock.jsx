@@ -14,8 +14,10 @@ const Stock = () => {
     const {user} = useContext(Context);
     const [stock, setStock] = useState([]);
     const [head, setHead] = useState([{name: "Name", el: "name", use: true, def: true},{name: "Vendor code", el: "vendor_code", use: true, def: true}, {name: "Inventory number", el: "inventory_number", use: true, def: true}, {name: "Rental point", el: "rentalPointId", use: true, def: false}, {name: "Category", el: "rentalCategoryId", use: true, def: false}, {name: "Status", el: "rentalStatusId", use: true, def: false}]);
+    const [itemSearch, setItemSearch] = useState(['name', 'vendor_code', 'inventory_number']);
     const [search, setSearch] = useState("");
     const navigate = useNavigate();
+    const [stockGood, setStockGood] = useState([]);
 
     const [listPoints, setListPoints] = useState([]);
     const [listCategory, setListCategory] = useState([]);
@@ -26,28 +28,30 @@ const Stock = () => {
     },[]);
 
     useEffect(() => {
-        let replace_value = [];
-
-        for (let index = 0; index < stock.length; ++index) {
-            let dd = stock[index];
-            dd.rentalPointId = -1;
-            replace_value.push(dd);
+        if (listStatus.length  && listPoints.length && listCategory.length && stock){
+            let replace_value = Object.assign([], stock);
+            replace_value.forEach(function (entry){
+                let category_replace = listCategory.find(o => o.id == entry['rentalCategoryId']);
+                let status_replace = listStatus.find(o => o.id == entry['rentalStatusId']);
+                let points_replace = listPoints.find(o => o.id == entry['rentalPointId']);
+                if (category_replace && status_replace && points_replace){
+                    entry['rentalCategoryId'] = category_replace.name
+                    entry['rentalStatusId'] = status_replace.name;
+                    entry['rentalPointId'] = points_replace.name;
+                }
+            });
+            setStockGood(replace_value);
         }
-        console.log(replace_value);
-        setStock(replace_value);
-
-
     }, [listStatus, listPoints, listCategory])
 
     const reloading = () => {
-        let stock_get = get_stock(user.user.company.id).then(stock => {setStock(stock); replacing_value()})
+       get_stock(user.user.company.id).then(stock => {setStock(stock); replacing_value()})
     }
     const replacing_value = () =>{
-        let points_get = get_rental_points(user.user.company.id).then(points => setListPoints(points))
-        let category_get = get_rental_category(user.user.company.id).then(category => setListCategory(category));
-        let status_get = get_rental_status(user.user.company.id).then(status => setListStatus(status));
+        get_rental_points(user.user.company.id).then(points => setListPoints(points))
+        get_rental_category(user.user.company.id).then(category => setListCategory(category));
+        get_rental_status(user.user.company.id).then(status => setListStatus(status));
     }
-    // const replacingValues()
 
     const changeElHead = (e, el) =>{
         let elem = head.filter(function(f) { if(f['el'] == el){f['use'] = e.target.checked} return true});
@@ -84,7 +88,7 @@ const Stock = () => {
                         </Row>
                         <br/>
                         <div className="blockScrollTable">
-                            <TableMain data_body={stock} data_search={search} data_head={head.filter(function(f) { return f['use'] })} delete_item={deleteClient} url_edit="stock_edit"/>
+                            <TableMain data_body={stockGood} data_search={search} data_head={head.filter(function(f) { return f['use'] })} delete_item={deleteClient} url_edit="stock_edit" itemSearch={itemSearch}/>
                         </div>
                     </Card>
                 </Col>

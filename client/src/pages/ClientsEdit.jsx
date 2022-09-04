@@ -198,6 +198,15 @@ const ClientsEdit = () => {
         }
     }
 
+    const uploadImageClient = (files) =>{
+        const FormData1 = new FormData();
+        FormData1.append('images', files[0]);
+        FormData1.append('id_company', user.user.company.id);
+        FormData1.append('id_client', id);
+        const upload = upload_images_client(FormData1);
+        return upload;
+    }
+
 
     return (
         <Container fluid className="mainContainer">
@@ -286,7 +295,7 @@ const ClientsEdit = () => {
 
                     <Card className="card p-4 ">
 
-                    <DropZona user={user} id={id} update_files_info={update_files_info} allFiles={allFiles} saveUploadImages={saveUploadImages} setSaveUploadImages={setSaveUploadImages}/>
+                    <DropZona user={user} id={id} uploadImageFunc={uploadImageClient} update_files_info={update_files_info} allFiles={allFiles} saveUploadImages={saveUploadImages} setSaveUploadImages={setSaveUploadImages}/>
                     </Card>
                 </Col>
             </Row>

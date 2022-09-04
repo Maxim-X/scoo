@@ -14,6 +14,7 @@ import MainButton from "../components/UI/MainButton/MainButton";
 import MiniRedButton from "../components/UI/MiniRedButton/MiniRedButton";
 import {RiDeleteBack2Fill} from "react-icons/ri";
 import DropZona from "../components/UI/DropZona/DropZona";
+import {upload_images_client} from "../http/companyAPI";
 
 const StockEdit = () => {
     const navigate = useNavigate();
@@ -55,7 +56,6 @@ const StockEdit = () => {
         get_rental_status(user.user.company.id).then(statuses => setListStatuses(statuses));
         setSuccessAdd("");
         setFailAdd("");
-        console.log(listPoints);
         if (id == undefined){
             setName("");
             setVendorCode("");
@@ -97,23 +97,20 @@ const StockEdit = () => {
                 data = await edit_inventory(inventory, user.user.company.id, id);
             }else {
                 data = await add_inventory(inventory, user.user.company.id);
-                console.log(data)
-                // if (saveUploadImages.length != 0){
-                //     for (let i = 0; i < saveUploadImages.length; i++){
-                //         const FormData1 = new FormData();
-                //         FormData1.append('images', saveUploadImages[i][0]);
-                //         FormData1.append('id_company', user.user.company.id);
-                //         FormData1.append('id_client', data.client_id);
-                //         const upload = await upload_images_inventory(FormData1);
-                //     }
-                // }
-
             }
-
             setSuccessAdd(data.message);
         }catch (e){
             setFailAdd(e.response.data.message);
         }
+    }
+
+    const uploadImageStock = (files) =>{
+        const FormData1 = new FormData();
+        FormData1.append('images', files[0]);
+        FormData1.append('id_company', user.user.company.id);
+        FormData1.append('id_stock', id);
+        const upload = upload_images_inventory(FormData1);
+        return upload;
     }
     return (
         <Container fluid className="mainContainer">
@@ -190,7 +187,7 @@ const StockEdit = () => {
                     </Card>
 
                     <Card className="card p-4 ">
-                        <DropZona user={user} id={id} update_files_info={update_files_info} allFiles={allFiles} saveUploadImages={saveUploadImages} setSaveUploadImages={setSaveUploadImages}/>
+                        <DropZona user={user} id={id} uploadImageFunc={uploadImageStock} update_files_info={update_files_info} allFiles={allFiles} saveUploadImages={saveUploadImages} setSaveUploadImages={setSaveUploadImages}/>
                     </Card>
                 </Col>
             </Row>

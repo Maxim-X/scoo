@@ -1,21 +1,19 @@
-import React, {useContext, useEffect, useMemo, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Button, Card, Col, Container, Form, Row, Table} from "react-bootstrap";
 import SearchInput from "../components/UI/SearchInput/SearchInput";
-import {login} from "../http/userAPI";
-import {all_clients, del_clients, get_phone_client} from "../http/companyAPI";
-import data from "bootstrap/js/src/dom/data";
+import {all_clients, del_clients, get_phone_client, upload_images_client} from "../http/companyAPI";
 import TableMain from "../components/TableMain";
 import {IoIosAdd} from "react-icons/io";
 import MainButton from "../components/UI/MainButton/MainButton";
 import ModalClient from "../components/UI/ModalClient/ModalClient";
 import {Context} from "../index";
 import {useNavigate} from "react-router-dom";
-import {forEach} from "react-bootstrap/ElementChildren";
 
 const Clients = () => {
     const {user} = useContext(Context);
     const [clients, setClients] = useState([]);
     const [head, setHead] = useState([{name: "Name", el: "name", use: true, def: true},{name: "Email", el: "email", use: true, def: true}, {name: "Phone", el: "phone", use: true, def: true}, {name: "Birthday", el: "birthday", use: true, def: false}, {name: "Driver license", el: "driver_license_number", use: false, def: false}, {name: "Passport number", el: "passport_number", use: false, def: false}]);
+    const [itemSearch, setItemSearch] = useState(['name', 'email', 'phone']);
     const [modalShow, setModalShow] = React.useState(false);
     const [clientEdit, setClientEdit] = useState(0);
     const [search, setSearch] = useState("");
@@ -45,10 +43,6 @@ const Clients = () => {
         }
     }
 
-
-
-
-
     return (
         <Container fluid className="mainContainer">
             <Row>
@@ -73,7 +67,7 @@ const Clients = () => {
                         </Row>
                         <br/>
                         <div className="blockScrollTable">
-                            <TableMain data_body={clients} data_search={search} data_head={head.filter(function(f) { return f['use'] })} setModalShow={setModalShow} setClientEdit={setClientEdit} url_edit="clients_edit" delete_item={deleteClient}/>
+                            <TableMain data_body={clients} data_search={search} data_head={head.filter(function(f) { return f['use'] })} setModalShow={setModalShow} setClientEdit={setClientEdit} url_edit="clients_edit" delete_item={deleteClient} itemSearch={itemSearch}/>
                         </div>
                     </Card>
                 </Col>
